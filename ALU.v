@@ -76,7 +76,7 @@ begin
 		C = A + B;
 		
 		// Set the Zero flag (4)
-		if (C == 16'b000000000000) 
+		if (C == 16'b0000_0000_0000_0000) 
 			Flags[4] = 1'b1;
 		else 
 			Flags[4] = 1'b0;
@@ -97,7 +97,8 @@ begin
 		{Flags[3], C} = A + B;
 		
 		// Set the 0 flag(4)
-		if (C == 16'b000000000000) Flags[4] = 1'b1; 
+		if (C == 16'b0000_0000_0000_0000)
+			Flags[4] = 1'b1; 
 		else Flags[4] = 1'b0;
 		
 		// The rest of the flags will be 0
@@ -111,7 +112,7 @@ begin
 		C = A + B + 1;
 		
 		// Set the Zero flag (4)
-		if (C == 16'b000000000000) 
+		if (C == 16'b0000_0000_0000_0000) 
 			Flags[4] = 1'b1;
 		else 
 			Flags[4] = 1'b0;
@@ -132,7 +133,8 @@ begin
 		{Flags[3], C} = A + B + 1;
 		
 		// Set the zero flag(4)
-		if (C == 16'b000000000000) Flags[4] = 1'b1; 
+		if (C == 16'b0000_0000_0000_0000) 
+			Flags[4] = 1'b1; 
 		else Flags[4] = 1'b0;
 		
 		// The rest of the flags will be 0
@@ -144,12 +146,16 @@ begin
 		begin
 		C = A - B;
 		// Set the zero(4) flag
-		if (C == 16'b000000000000) Flags[4] = 1'b1;
-		else Flags[4] = 1'b0;
+		if (C == 16'b0000_0000_0000_0000) 
+			Flags[4] = 1'b1;
+		else 
+			Flags[4] = 1'b0;
 		
 		// Set the overflow flag (2)
-		if( (~A[15] & ~B[15] & C[15]) | (A[15] & B[15] & ~C[15]) ) Flags[2] = 1'b1;
-		else Flags[2] = 1'b0;
+		if( (~A[15] & ~B[15] & C[15]) | (A[15] & B[15] & ~C[15]) ) 
+			Flags[2] = 1'b1;
+		else 
+			Flags[2] = 1'b0;
 		
 		// Set the Carry(3), negative(1), and low(0) flags to 0
 		Flags[1:0] = 2'b00; Flags[3] = 1'b0;
@@ -158,21 +164,30 @@ begin
 	CMPI:
 	CMP:
 		begin
-		if( $signed(A) < $signed(B) ) Flags[1:0] = 2'b11;
-		else Flags[1:0] = 2'b00;
-		C = 16'b000000000000;
+		if( $signed(A) < $signed(B) ) 
+			Flags[1:0] = 2'b11;
+		else 
+			Flags[1:0] = 2'b00;
+		C = 16'b0000_0000_0000_0000;
 		Flags[4:2] = 3'b000;
+		
 		// both positive or both negative
 		if( A[15] == B[15] )
 		begin
-			if (A < B) Flags[1:0] = 2'b11;
-			else Flags[1:0] = 2'b00;
+			if (A < B) 
+				Flags[1:0] = 2'b11;
+			else 
+				Flags[1:0] = 2'b00;
 		end
-		else if (A[3] == 1'b0) Flags[1:0] = 2'b00;
-		else Flags[1:0] = 2'b01;
-		Flags[4:2] = 3'b000;
 		
-		C = 16'b000000000000;
+		// If A is negative, and different from B, don't set negative and low flags
+		else if (A[15] == 1'b0) 
+			Flags[1:0] = 2'b00;
+			
+		// If A is positive, and different from B, set the low flag
+		else 
+			Flags[1:0] = 2'b01;
+		Flags[4:2] = 3'b000;
 		end
 	
 	CMPUI:
@@ -183,37 +198,145 @@ begin
 	
 	AND:
 		begin
-		// ...
+		C = A & B;
+		if (C == 16'b0000_0000_0000_0000)
+			Flags[4] = 1'b1;
+		else
+			Flags[4] = 1'b0;
+		// Set the carry(3), overflow(2), negative(1), and low(0) flags to 0
+		Flags[3:0] = 4'b0000;
 		end
+		
 	OR:
 		begin
-		// ...
+		C = A | B;
+		if (C == 16'b0000_0000_0000_0000)
+			Flags[4] = 1'b1;
+		else
+			Flags[4] = 1'b0;
+		Flags[3:0] = 4'b0000;
 		end
+		
 	XOR:
 		begin
-		// ...
+		C = A ^ B;
+		if (C == 16'b0000_0000_0000_0000)
+			Flags[4] = 1'b1;
+		else
+			Flags[4] = 1'b0;
+		Flags[3:0] = 4'b0000;
 		end
+		
 	NOT:
 		begin
-		// ...
+		C = ~A;
+		if (C == 16'b0000_0000_0000_0000)
+			Flags[4] = 1'b1;
+		else
+			Flags[4] = 1'b0;
+		Flags[3:0] = 4'b0000;
 		end
 		
 	LSHI:
+		// Left shift of A by B bits
+		begin
+		C = A << B;
+		if (C == 16'b0000_0000_0000_0000)
+			Flags[4] = 1'b1;
+		else
+			Flags[4] = 1'b0;
+		Flags[3:0] = 4'b0000;
+		end
 	LSH:
 		begin
-		// ...
+		// Left shift of A by 1 bit (no sign extension)
+		C = A << 1;
+		if (C == 16'b0000_0000_0000_0000)
+			Flags[4] = 1'b1;
+		else
+			Flags[4] = 1'b0;
+		Flags [3:0] = 4'b0000;
 		end
 		
 	RSHI:
+		// Right shift of A by B bits
+		begin
+		C = A >> B;
+		if (C == 16'b0000_0000_0000_0000)
+			Flags[4] = 1'b1;
+		else
+			Flags[4] = 1'b0;
+		Flags [3:0] = 4'b0000;
+		end
+		
 	RSH:
 		begin
-		// ...
+		// Right shift of A by 1 bit (no sign extension)
+		C = A >> 1;
+		if (C = 16'b0000_0000_0000_0000)
+			Flags[4] = 1'b1;
+		else
+			Flags[4] = 1'b0;
+		Flags [3:0] = 4'b0000;
 		end
-
+	
+	ALSH:
+		begin
+		// Implement left shift of A by 1 bit (with sign extension)
+		if (A[15] == 1'b1)
+			begin
+			C = A << 1;
+			C[15] = 1'b1;
+			// This result can't be zero
+			Flags[4] = 1'b0;
+			end
+		else
+			begin
+			C = A << 1;
+			if (C == 16'b0000_0000_0000_0000)
+				Flags[4] = 1'b1;
+			else
+				Flags[4] = 1'b0;
+			end
+		Flags[3:0] = 4'b0000;
+		end
+		
+	ARSH:
+		begin
+		// right shift of A by 1 bit (with sign extension)
+		if (A[15] == 1'b1)
+			C = A >> 1;
+			begin
+			C[15] = 1'b1;
+			// This result can't be zero
+			Flags[4] = 1'b0;
+		else
+			begin
+			C = A >> 1;
+			if (C == 16'b0000_0000_0000_0000)
+				Flags[4] = 1'b1;
+			else
+				Flags[4] = 1'b0;
+			end
+		Flags[3:0] = 4'b0000;
+		end
+		
+	NOP:
+		// "No operation", keep all operators and flags the same
+		begin
+		C = 16'bx;
+		Flags[4:0] = 5'b00000;
+		end
+		
+	WAIT:
+		// help
+		begin
+		
+		end
 		
 	default: 
 		begin
-			C = 16'b000000000000;
+			C = 16'bx;
 			Flags = 5'b00000;
 		end
 	endcase

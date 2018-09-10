@@ -80,166 +80,168 @@ begin
 		4'b0000:
 		begin
 			case (Opcode[3:0])
-			AND:
+				AND:
 				begin
-				C = A & B;
-				if (C == 16'b0000_0000_0000_0000)
-					Flags[4] = 1'b1;
-				else
-					Flags[4] = 1'b0;
-				// Set the carry(3), overflow(2), negative(1), and low(0) flags to 0
-				Flags[3:0] = 4'b0000;
+					C = A & B;
+					if (C == 16'b0000_0000_0000_0000)
+						Flags[4] = 1'b1;
+					else
+						Flags[4] = 1'b0;
+					// Set the carry(3), overflow(2), negative(1), and low(0) flags to 0
+					Flags[3:0] = 4'b0000;
 				end
-				
-			OR:
-				begin
-				C = A | B;
-				if (C == 16'b0000_0000_0000_0000)
-					Flags[4] = 1'b1;
-				else
-					Flags[4] = 1'b0;
-				Flags[3:0] = 4'b0000;
-				end
-				
-			XOR:
-				begin
-				C = A ^ B;
-				if (C == 16'b0000_0000_0000_0000)
-					Flags[4] = 1'b1;
-				else
-					Flags[4] = 1'b0;
-				Flags[3:0] = 4'b0000;
-				end
-				
-			NOT:
-				begin
-				C = ~A;
-				if (C == 16'b0000_0000_0000_0000)
-					Flags[4] = 1'b1;
-				else
-					Flags[4] = 1'b0;
-				Flags[3:0] = 4'b0000;
-				end
-				
-			ADD:
-				begin
-				C = A + B;
-				
-				// Set the Zero flag (4)
-				if (C == 16'b0000_0000_0000_0000) 
-					Flags[4] = 1'b1;
-				else 
-					Flags[4] = 1'b0;
 					
-				// Set the Overflow Flag (2)
-				if((~A[15] & ~B[15] & C[15]) | (A[15] & B[15] & ~C[15])) 
-					Flags[2] = 1'b1;
-				else Flags[2] = 1'b0;
-
-				// Set the Carry(3), negative(1), and low(0) flags to 0
-				Flags[1:0] = 2'b00; Flags[3] = 1'b0;
-				end
-			
-			ADDU:
+				OR:
 				begin
-				// The carry flag is set with the C assignment
-				{Flags[3], C} = A + B;
-				
-				// Set the 0 flag(4)
-				if (C == 16'b0000_0000_0000_0000)
-					Flags[4] = 1'b1; 
-				else Flags[4] = 1'b0;
-				
-				// The rest of the flags will be 0
-				Flags[2:0] = 3'b000;
+					C = A | B;
+					if (C == 16'b0000_0000_0000_0000)
+						Flags[4] = 1'b1;
+					else
+						Flags[4] = 1'b0;
+					Flags[3:0] = 4'b0000;
 				end
-				
-			ADDC:
-				begin
-				C = A + B + 1;
-				
-				// Set the Zero flag (4)
-				if (C == 16'b0000_0000_0000_0000) 
-					Flags[4] = 1'b1;
-				else 
-					Flags[4] = 1'b0;
 					
-				// Set the Overflow Flag (2)
-				if((~A[15] & ~B[15] & C[15]) | (A[15] & B[15] & ~C[15])) 
-					Flags[2] = 1'b1;
-				else Flags[2] = 1'b0;
+				XOR:
+				begin
+					C = A ^ B;
+					if (C == 16'b0000_0000_0000_0000)
+						Flags[4] = 1'b1;
+					else
+						Flags[4] = 1'b0;
+						
+					Flags[3:0] = 4'b0000;
+				end
+					
+				NOT:
+				begin
+					C = ~A;
+					if (C == 16'b0000_0000_0000_0000)
+						Flags[4] = 1'b1;
+					else
+						Flags[4] = 1'b0;
+						
+					Flags[3:0] = 4'b0000;
+				end
+					
+				ADD:
+				begin
+					C = A + B;
+					
+					// Set the Zero flag (4)
+					if (C == 16'b0000_0000_0000_0000) 
+						Flags[4] = 1'b1;
+					else 
+						Flags[4] = 1'b0;
+						
+					// Set the Overflow Flag (2)
+					if((~A[15] & ~B[15] & C[15]) | (A[15] & B[15] & ~C[15])) 
+						Flags[2] = 1'b1;
+					else Flags[2] = 1'b0;
 
-				// Set the Carry(3), negative(1), and low(0) flags to 0
-				Flags[1:0] = 2'b00; Flags[3] = 1'b0;
+					// Set the Carry(3), negative(1), and low(0) flags to 0
+					Flags[1:0] = 2'b00; Flags[3] = 1'b0;
 				end
 				
-			ADDCU:
+				ADDU:
 				begin
-				// The carry flag is set with the C assignment
-				{Flags[3], C} = A + B + 1;
-				
-				// Set the zero flag(4)
-				if (C == 16'b0000_0000_0000_0000) 
-					Flags[4] = 1'b1; 
-				else Flags[4] = 1'b0;
-				
-				// The rest of the flags will be 0
-				Flags[2:0] = 3'b000;
+					// The carry flag is set with the C assignment
+					{Flags[3], C} = A + B;
+					
+					// Set the 0 flag(4)
+					if (C == 16'b0000_0000_0000_0000)
+						Flags[4] = 1'b1; 
+					else Flags[4] = 1'b0;
+					
+					// The rest of the flags will be 0
+					Flags[2:0] = 3'b000;
 				end
-			
-			SUB:
+					
+				ADDC:
 				begin
-				C = A - B;
-				// Set the zero(4) flag
-				if (C == 16'b0000_0000_0000_0000) 
-					Flags[4] = 1'b1;
-				else 
-					Flags[4] = 1'b0;
-				
-				// Set the overflow flag (2)
-				if( (~A[15] & ~B[15] & C[15]) | (A[15] & B[15] & ~C[15]) ) 
-					Flags[2] = 1'b1;
-				else 
-					Flags[2] = 1'b0;
-				
-				// Set the Carry(3), negative(1), and low(0) flags to 0
-				Flags[1:0] = 2'b00; Flags[3] = 1'b0;
+					C = A + B + 1;
+					
+					// Set the Zero flag (4)
+					if (C == 16'b0000_0000_0000_0000) 
+						Flags[4] = 1'b1;
+					else 
+						Flags[4] = 1'b0;
+						
+					// Set the Overflow Flag (2)
+					if((~A[15] & ~B[15] & C[15]) | (A[15] & B[15] & ~C[15])) 
+						Flags[2] = 1'b1;
+					else Flags[2] = 1'b0;
+
+					// Set the Carry(3), negative(1), and low(0) flags to 0
+					Flags[1:0] = 2'b00; Flags[3] = 1'b0;
 				end
-			
-			CMP:
+					
+				ADDCU:
 				begin
-				if( $signed(A) < $signed(B) ) 
-					Flags[1:0] = 2'b11;
-				else 
-					Flags[1:0] = 2'b00;
-				C = 16'b0000_0000_0000_0000;
-				Flags[4:2] = 3'b000;
+					// The carry flag is set with the C assignment
+					{Flags[3], C} = A + B + 1;
+					
+					// Set the zero flag(4)
+					if (C == 16'b0000_0000_0000_0000) 
+						Flags[4] = 1'b1; 
+					else Flags[4] = 1'b0;
+					
+					// The rest of the flags will be 0
+					Flags[2:0] = 3'b000;
+				end
 				
-				// both positive or both negative
-				if( A[15] == B[15] )
+				SUB:
 				begin
-					if (A < B) 
+					C = A - B;
+					// Set the zero(4) flag
+					if (C == 16'b0000_0000_0000_0000) 
+						Flags[4] = 1'b1;
+					else 
+						Flags[4] = 1'b0;
+					
+					// Set the overflow flag (2)
+					if( (~A[15] & ~B[15] & C[15]) | (A[15] & B[15] & ~C[15]) ) 
+						Flags[2] = 1'b1;
+					else 
+						Flags[2] = 1'b0;
+					
+					// Set the Carry(3), negative(1), and low(0) flags to 0
+					Flags[1:0] = 2'b00; Flags[3] = 1'b0;
+				end
+				
+				CMP:
+				begin
+					if( $signed(A) < $signed(B) ) 
 						Flags[1:0] = 2'b11;
 					else 
 						Flags[1:0] = 2'b00;
+					C = 16'b0000_0000_0000_0000;
+					Flags[4:2] = 3'b000;
+					
+					// both positive or both negative
+					if( A[15] == B[15] )
+					begin
+						if (A < B) 
+							Flags[1:0] = 2'b11;
+						else 
+							Flags[1:0] = 2'b00;
+					end
+					
+					// If A is negative, and different from B, don't set negative and low flags
+					else if (A[15] == 1'b0) 
+						Flags[1:0] = 2'b00;
+						
+					// If A is positive, and different from B, set the low flag
+					else 
+						Flags[1:0] = 2'b01;
+					Flags[4:2] = 3'b000;
 				end
 				
-				// If A is negative, and different from B, don't set negative and low flags
-				else if (A[15] == 1'b0) 
-					Flags[1:0] = 2'b00;
-					
-				// If A is positive, and different from B, set the low flag
-				else 
-					Flags[1:0] = 2'b01;
-				Flags[4:2] = 3'b000;
-				end
-			
-			CMPU:
+				CMPU:
 				begin
-				// ...
+					// ...
 				end
-			
-			default: 		// used for WAIT and NOP - they're the same thing
+				
+				default: 		// used for WAIT and NOP - they're the same thing
 				begin
 					// when there is no opcode to use
 					C = 16'bx;
@@ -271,25 +273,25 @@ begin
 		begin
 			// opcode is for ALL shifts
 			case (Opcode[3:0])
-						LSHI:
+				LSHI:
 				// Left shift of A by B bits
 				begin
-				C = A << B;
-				if (C == 16'b0000_0000_0000_0000)
-					Flags[4] = 1'b1;
-				else
-					Flags[4] = 1'b0;
-				Flags[3:0] = 4'b0000;
+					C = A << B;
+					if (C == 16'b0000_0000_0000_0000)
+						Flags[4] = 1'b1;
+					else
+						Flags[4] = 1'b0;
+					Flags[3:0] = 4'b0000;
 				end
-			LSH:
+				LSH:
 				begin
-				// Left shift of A by 1 bit (no sign extension)
-				C = A << 1;
-				if (C == 16'b0000_0000_0000_0000)
-					Flags[4] = 1'b1;
-				else
-					Flags[4] = 1'b0;
-				Flags [3:0] = 4'b0000;
+					// Left shift of A by 1 bit (no sign extension)
+					C = A << 1;
+					if (C == 16'b0000_0000_0000_0000)
+						Flags[4] = 1'b1;
+					else
+						Flags[4] = 1'b0;
+					Flags [3:0] = 4'b0000;
 				end
 			/*	
 			RSHI:

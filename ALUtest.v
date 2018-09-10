@@ -79,7 +79,8 @@ module ALUtest;
 	/* We will do: ADD, ADDI, ADDU, ADDUI, ADDC, ADDCU, ADDCUI, ADDCI, SUB, SUBI, CMP, CMPI, CMPU/I, AND,
 	OR, XOR, NOT, LSH, LSHI, RSH, RSHI, ALSH, ARSH, NOP/WAIT      */
 
-	
+	event terminate_sim;
+	reg error;
 	integer i;
 	reg [15:0] expectedC;
 	reg [4:0] expectedFlags;
@@ -93,6 +94,19 @@ module ALUtest;
 		.Flags(Flags)
 	);
 
+	initial
+	@ (terminate_sim) begin
+		$display("Terminating simulation");
+		if (error == 0)
+		begin
+			$display("Simulation Result: PASSED");
+		end
+		else begin
+			$display("Simulation Result: FAILED");
+		end
+		#1 $finish;
+	end
+	
 	initial 
 	begin
 //			$monitor("A: %0d, B: %0d, C: %0d, Flags[1:0]:
@@ -104,6 +118,7 @@ module ALUtest;
 		// Initialize Inputs
 		A = 0;
 		B = 0;
+		Opcode = 0;
 
 		// Wait 100 ns for global reset to finish
 /*****
@@ -116,7 +131,7 @@ module ALUtest;
 		//$display("A: %b, B: %b, C:%b, Flags[1:0]: %b, time:%d", A, B, C, Flags[1:0], $time);
 ****/
 			// random simulation
-			for (i = 0; i < 1000; i = 1+1)
+			for (i = 0; i < 10; i = 1+1)
 			begin
 				#10;
 				A = $random % 1000;
@@ -125,7 +140,7 @@ module ALUtest;
 				expectedFlags = 5'bx;
 
 				//check all opcodes
-				for( Opcode = 0; Opcode < 4'b1111; Opcode = Opcode+1)
+				for( Opcode = 0; Opcode < 8'b1111111; Opcode = Opcode+1)
 				begin
 					#10;
 					expectedC = 16'bx;
@@ -140,18 +155,24 @@ module ALUtest;
 								AND:
 								begin
 									//test value
+									// expectedC is the value that the ALU *SHOULD* put in C
 									expectedC = A & B;
+									// If C is not the expected value, print helpful information and terminate
 									if (C != expectedC)
 									begin
 										$display ("ERROR at time: %d", $time);
-										$display ("Expected value: %d, Actual Value: %d", expectedC, C);
+										$display ("Expected value: %d, Actual Value: %d, Opcode: %b", expectedC, C, Opcode);
+										#5 -> terminate_sim;
 									end
 									//test flags
+									//same with above but for flags
 									expectedFlags = {(C == 16'b0000_0000_0000_0000), 4'b000};
 									if (Flags != expectedFlags)
 									begin
-										$display ("ERROR at time: %d", $time);
-										$display ("Expected value: %d, Actual Value: %d", expectedFlags, Flags);
+										$display ("ERROR at time: %d", $time);										
+										$display ("Expected value: %d, Actual Value: %d, Opcode: %b", expectedC, C, Opcode);
+										$display ("Expected flag: %d, Actual flag: %d", expectedFlags, Flags);
+										#5 -> terminate_sim;
 									end
 								end
 								

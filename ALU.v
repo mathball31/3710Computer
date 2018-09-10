@@ -51,7 +51,7 @@ parameter CMPU = 4'b1111;
 
 // opcode hi = 1000
 parameter LSHI = 4'b0000;		// can also be 0001
-parameter LSH = 4'b0100
+parameter LSH = 4'b0100;
 
 // opcode hi = 1001 = SUBI
 // ONLY assign 1001 to SUBI - the last 4 bits of opcode will be used for the immediate add operation
@@ -255,7 +255,7 @@ begin
 			// concatenate (sp?) the last 4 bits of opcode with the last 4 bits of B in a temporary register
 		end
 		
-		4'b0101:
+		4'b0110:
 		begin
 			// for ADDUI, add unsigned immediate
 			// just like above in ADDI, except for unsigned integers
@@ -291,7 +291,7 @@ begin
 					Flags[4] = 1'b0;
 				Flags [3:0] = 4'b0000;
 				end
-				
+			/*	
 			RSHI:
 				// Right shift of A by B bits
 				begin
@@ -307,7 +307,7 @@ begin
 				begin
 				// Right shift of A by 1 bit (no sign extension)
 				C = A >> 1;
-				if (C = 16'b0000_0000_0000_0000)
+				if (C == 16'b0000_0000_0000_0000)
 					Flags[4] = 1'b1;
 				else
 					Flags[4] = 1'b0;
@@ -338,22 +338,26 @@ begin
 			ARSH:
 				begin
 				// right shift of A by 1 bit (with sign extension)
-				if (A[15] == 1'b1)
-					C = A >> 1;
+					if (A[15] == 1'b1)
 					begin
-					C[15] = 1'b1;
-					// This result can't be zero
-					Flags[4] = 1'b0;
-				else
-					begin
-					C = A >> 1;
-					if (C == 16'b0000_0000_0000_0000)
-						Flags[4] = 1'b1;
-					else
+						C = A >> 1;
+						C[15] = 1'b1;
+						// This result can't be zero
 						Flags[4] = 1'b0;
+					end else
+					begin
+						C = A >> 1;
+						if (C == 16'b0000_0000_0000_0000)
+						begin
+							Flags[4] = 1'b1;
+						end else
+						begin
+							Flags[4] = 1'b0;
+						end
 					end
-				Flags[3:0] = 4'b0000;
+					Flags[3:0] = 4'b0000;
 				end
+				*/
 			endcase
 		end
 	endcase

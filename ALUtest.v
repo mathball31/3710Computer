@@ -332,17 +332,63 @@ module ALUtest;
 									// Check for overflow
 									expectedFlags[2] = ((~A[15] && ~B[15] && C[15]) || (A[15] && B[15] && ~C[15]));
 									// Set the Carry(3), negative(1), and low(0) flags to 0
-									expectedFlags[1:0] = 2'b00; expectedFlags[3] = 1'b0;
+									expectedFlags[1:0] = 2'b00; 
+									expectedFlags[3] = 1'b0;
+									if (Flags != expectedFlags)
+									begin
+										$display ("ERROR at time: %d", $time);										
+										$display ("Expected value: %d, Actual Value: %d, Opcode: %b", expectedC, C, Opcode);
+										$display ("Expected flag %b, Actual flag %b", expectedFlags, Flags);
+										#5 -> terminate_sim;
+									end
 								end
 								
 								CMP:
 								begin
-								
+									expectedC = 16'b0000_0000_0000_0000;
+									if (C != expectedC)
+									begin
+										$display ("ERROR at time: %d", $time);
+										$display ("Expected value: %d, Actual Value: %d, Opcode: %b", expectedC, C, Opcode);
+										#5 -> terminate_sim;
+									end
+									
+									expectedFlags[4] = ($signed(A) == $signed(B));
+									if( $signed(A) < $signed(B) ) 
+										expectedFlags[1:0] = 2'b11;
+									else 
+										expectedFlags[1:0] = 2'b00;
+									// Set the Carry(3), negative(1), and low(0) flags to 0
+									expectedFlags[3:2] = 2'b00;
+									if (Flags != expectedFlags)
+									begin
+										$display ("ERROR at time: %d", $time);										
+										$display ("Expected value: %d, Actual Value: %d, Opcode: %b", expectedC, C, Opcode);
+										$display ("Expected flag %b, Actual flag %b", expectedFlags, Flags);
+										#5 -> terminate_sim;
+									end
 								end
 								
 								CMPU:
 								begin
-								
+									expectedC = 16'b0000_0000_0000_0000;
+									if (C != expectedC)
+									begin
+										$display ("ERROR at time: %d", $time);
+										$display ("Expected value: %d, Actual Value: %d, Opcode: %b", expectedC, C, Opcode);
+										#5 -> terminate_sim;
+									end
+									
+									expectedFlags[0] = (A < B);
+									expectedFlags[3:1] = 3'b000;
+									expectedFlags[4] = (A == B);
+									if (Flags != expectedFlags)
+									begin
+										$display ("ERROR at time: %d", $time);										
+										$display ("Expected value: %d, Actual Value: %d, Opcode: %b", expectedC, C, Opcode);
+										$display ("Expected flag %b, Actual flag %b", expectedFlags, Flags);
+										#5 -> terminate_sim;
+									end
 								end
 							//Opcode Second Half
 							endcase

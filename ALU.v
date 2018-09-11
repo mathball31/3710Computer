@@ -75,6 +75,8 @@ OR, XOR, NOT, LSH, LSHI, RSH, RSHI, ALSH, ARSH, NOP/WAIT      */
 
 always @(A, B, Opcode)
 begin
+	C = 16'bx;
+	Flags = 5'bx;
 	// check the first four bits of the opcode
 	case (Opcode[7:4])
 		4'b0000:
@@ -208,12 +210,14 @@ begin
 					Flags[1:0] = 2'b00; Flags[3] = 1'b0;
 				end
 				
+				// Take a look at compare... we think it needs some work --Dirk & Michelle
 				CMP:
 				begin
 					if( $signed(A) < $signed(B) ) 
 						Flags[1:0] = 2'b11;
 					else 
 						Flags[1:0] = 2'b00;
+						
 					C = 16'b0000_0000_0000_0000;
 					Flags[4:2] = 3'b000;
 					
@@ -227,13 +231,14 @@ begin
 					end
 					
 					// If A is negative, and different from B, don't set negative and low flags
-					else if (A[15] == 1'b0) 
+					else if (A[15] == 1'b0) // This means A is positive... --Michelle
 						Flags[1:0] = 2'b00;
 						
 					// If A is positive, and different from B, set the low flag
 					else 
 						Flags[1:0] = 2'b01;
-					Flags[4:2] = 3'b000;
+						
+					Flags[4:2] = 3'b000; 
 				end
 				
 				CMPU:

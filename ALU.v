@@ -234,13 +234,8 @@ begin
 							Flags[1:0] = 2'b00;
 					end
 					
-<<<<<<< HEAD
 					// If A is positive, and different from B, don't set negative and low flags
 					else if (A[15] == 1'b0) 
-=======
-					// If A is negative, and different from B, don't set negative and low flags
-					else if (A[15] == 1'b0) // This means A is positive... --Michelle
->>>>>>> 76efa97ecdfb8fc22bcd9a506fd720eb207bb222
 						Flags[1:0] = 2'b00;
 						
 					// If A is negative, and different from B, set the low flag

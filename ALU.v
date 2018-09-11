@@ -210,6 +210,8 @@ begin
 				
 				CMP:
 				begin
+					// Is this differenct from the explicit sign checks also coded below?
+					// Does this method have redudant code?
 					if( $signed(A) < $signed(B) ) 
 						Flags[1:0] = 2'b11;
 					else 
@@ -226,11 +228,11 @@ begin
 							Flags[1:0] = 2'b00;
 					end
 					
-					// If A is negative, and different from B, don't set negative and low flags
+					// If A is positive, and different from B, don't set negative and low flags
 					else if (A[15] == 1'b0) 
 						Flags[1:0] = 2'b00;
 						
-					// If A is positive, and different from B, set the low flag
+					// If A is negative, and different from B, set the low flag
 					else 
 						Flags[1:0] = 2'b01;
 					Flags[4:2] = 3'b000;
@@ -238,7 +240,14 @@ begin
 				
 				CMPU:
 				begin
-					// ...
+					if (A < B)
+						Flags[0] = 1'b1;  // negative flag not set for unsigned operations
+					else
+						Flags[0] = 1'b0;
+					Flags [4:1] = 4'b0000;
+					C = [15:0] = 16'b0000_0000_0000_0000;
+						
+					
 				end
 				
 				default: 		// used for WAIT and NOP - they're the same thing
@@ -254,7 +263,9 @@ begin
 		begin
 			// reserved for ADDI, add immediate, ONLY
 			// that way, when this is called, ALU knows immediately that it just wants to do an add immediate
-			// concatenate (sp?) the last 4 bits of opcode with the last 4 bits of B in a temporary register
+			// concatenate the last 4 bits of opcode with the last 4 bits of B in a temporary register
+			C = A + (Opcode[3:0], B[3:0]);
+			
 		end
 		
 		4'b0110:

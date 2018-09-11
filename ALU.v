@@ -85,6 +85,8 @@ begin
 				AND:
 				begin
 					C = A & B;
+					
+					// YO it's easier (& better form) to write Flags[4] = (C == 16'b0000_0000_0000_0000);
 					if (C == 16'b0000_0000_0000_0000)
 						Flags[4] = 1'b1;
 					else
@@ -160,7 +162,7 @@ begin
 					
 				ADDC:
 				begin
-					C = A + B + 1;
+					{Flags[3], C} = A + B + 1;
 					
 					// Set the Zero flag (4)
 					if (C == 16'b0000_0000_0000_0000) 
@@ -174,7 +176,7 @@ begin
 					else Flags[2] = 1'b0;
 
 					// Set the Carry(3), negative(1), and low(0) flags to 0
-					Flags[1:0] = 2'b00; Flags[3] = 1'b0;
+					Flags[1:0] = 2'b00; 
 				end
 					
 				ADDCU:

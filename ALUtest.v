@@ -121,7 +121,7 @@ module ALUtest;
 		Opcode = 0;
 
 			// random simulation
-			for (i = 0; i < 10; i = 1+1)
+			for (i = 0; i < 10; i = i+1)
 			begin
 				#10;
 				A = $random % 1000;
@@ -255,7 +255,7 @@ module ALUtest;
 								
 								ADDU:
 								begin
-									expectedC = A + B; 
+									{expectedFlags[3], expectedC} = A + B; 
 									if (C != expectedC)
 									begin
 										$display ("ERROR at time: %d", $time);
@@ -263,7 +263,8 @@ module ALUtest;
 										#5 -> terminate_sim;
 									end
 									
-									expectedFlags = {(C == 16'b0000_0000_0000_0000), (A + B), 3'b000}; // why setting [3] this way? --Michelle
+									expectedFlags[4] = (C == 16'b0000_0000_0000_0000); 
+									expectedFlags[2:0] = 3'b000;
 									if (Flags != expectedFlags)
 									begin
 										$display ("ERROR at time: %d", $time);										
@@ -275,7 +276,7 @@ module ALUtest;
 								
 								ADDC:
 								begin
-									expectedC = A + B + 1;
+									{expectedFlags[3], expectedC} = A + B + 1;
 									if (C != expectedC)
 									begin
 										$display ("ERROR at time: %d", $time);
@@ -286,7 +287,7 @@ module ALUtest;
 									expectedFlags[4] = (C == 16'b0000_0000_0000_0000);
 									// Check for overflow
 									expectedFlags[2] = ((~A[15] && ~B[15] && C[15]) || (A[15] && B[15] && ~C[15]));
-									expectedFlags[1:0] = 2'b00; expectedFlags[3] = A + B + 1; // Why setting [3] this way? --Michelle
+									expectedFlags[1:0] = 2'b00;
 									if (Flags != expectedFlags)
 									begin
 										$display ("ERROR at time: %d", $time);										
@@ -428,7 +429,7 @@ module ALUtest;
 				
 		// for i to 1000
 		end
-		
+		#5 -> terminate_sim;
 	// initial
 	end
       

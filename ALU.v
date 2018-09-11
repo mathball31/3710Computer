@@ -75,6 +75,8 @@ OR, XOR, NOT, LSH, LSHI, RSH, RSHI, ALSH, ARSH, NOP/WAIT      */
 
 always @(A, B, Opcode)
 begin
+	C = 16'bx;
+	Flags = 5'bx;
 	// check the first four bits of the opcode
 	case (Opcode[7:4])
 		4'b0000:
@@ -83,6 +85,8 @@ begin
 				AND:
 				begin
 					C = A & B;
+					
+					// YO it's easier (& better form) to write Flags[4] = (C == 16'b0000_0000_0000_0000);
 					if (C == 16'b0000_0000_0000_0000)
 						Flags[4] = 1'b1;
 					else
@@ -158,7 +162,7 @@ begin
 					
 				ADDC:
 				begin
-					C = A + B + 1;
+					{Flags[3], C} = A + B + 1;
 					
 					// Set the Zero flag (4)
 					if (C == 16'b0000_0000_0000_0000) 
@@ -172,7 +176,7 @@ begin
 					else Flags[2] = 1'b0;
 
 					// Set the Carry(3), negative(1), and low(0) flags to 0
-					Flags[1:0] = 2'b00; Flags[3] = 1'b0;
+					Flags[1:0] = 2'b00; 
 				end
 					
 				ADDCU:
@@ -208,6 +212,7 @@ begin
 					Flags[1:0] = 2'b00; Flags[3] = 1'b0;
 				end
 				
+				// Take a look at compare... we think it needs some work --Dirk & Michelle
 				CMP:
 				begin
 					// Is this differenct from the explicit sign checks also coded below?
@@ -216,6 +221,7 @@ begin
 						Flags[1:0] = 2'b11;
 					else 
 						Flags[1:0] = 2'b00;
+						
 					C = 16'b0000_0000_0000_0000;
 					Flags[4:2] = 3'b000;
 					
@@ -228,14 +234,20 @@ begin
 							Flags[1:0] = 2'b00;
 					end
 					
+<<<<<<< HEAD
 					// If A is positive, and different from B, don't set negative and low flags
 					else if (A[15] == 1'b0) 
+=======
+					// If A is negative, and different from B, don't set negative and low flags
+					else if (A[15] == 1'b0) // This means A is positive... --Michelle
+>>>>>>> 76efa97ecdfb8fc22bcd9a506fd720eb207bb222
 						Flags[1:0] = 2'b00;
 						
 					// If A is negative, and different from B, set the low flag
 					else 
 						Flags[1:0] = 2'b01;
-					Flags[4:2] = 3'b000;
+						
+					Flags[4:2] = 3'b000; 
 				end
 				
 				CMPU:

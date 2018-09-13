@@ -26,7 +26,7 @@ output [27:0] Display;
 
 wire [15:0] C;
 
-ALU alu ({Aupper, 12'b0}, {Bupper, 12'b0}, C, Opcode, Flags, Cin);
+ALU alu ({Aupper, 12'b0}, {Bupper, 12'b0}, C, ~Opcode, Flags, Cin);
 
 hexTo7Seg seg0(C[15:12], Display[27:21]);
 hexTo7Seg seg1(C[11:8], Display[20:14]);

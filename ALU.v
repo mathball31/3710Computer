@@ -241,6 +241,7 @@ begin
 						
 					C = 16'b0000_0000_0000_0000;
 					Flags[3:2] = 2'b00;
+				end
 					
 					// both positive or both negative
 //					else if( A[15] == B[15] )
@@ -267,12 +268,10 @@ begin
 				
 				CMPU:
 				begin
-					if (A < B)
-						Flags[0] = 1'b1;  // negative flag not set for unsigned operations
-					else
-						Flags[0] = 1'b0;
-					Flags [4:1] = 4'b0000;
-					C = [15:0] = 16'b0000_0000_0000_0000;
+					Flags[0] = (A < B);  // negative flag not set for unsigned operations
+					Flags[3:1] = 3'b000;
+					Flags[4] = (A == B);
+					C = 16'b0000_0000_0000_0000;
 						
 					
 				end
@@ -343,23 +342,16 @@ begin
 			// that way, when this is called, ALU knows immediately that it just wants to do an add immediate
 			// concatenate the last 4 bits of opcode with the last 4 bits of B in a temporary register
 			// ** treat B as the immediate value.  We will take care of it elsewhere.
-					else 
-					C = A + B + Cin;
-					
-					// Set the Zero flag (4)
-					if (C == 16'b0000_0000_0000_0000) 
-						Flags[4] = 1'b1;
-					else 
-						Flags[4] = 1'b0;
-						
-					// Set the Overflow Flag (2)
-					if((~A[15] & ~B[15] & C[15]) | (A[15] & B[15] & ~C[15])) 
-						Flags[2] = 1'b1;
-					else 
-						Flags[2] = 1'b0;
+			C = A + B + Cin;
+			
+			// Set the Zero flag (4)
+			Flags[4] = (C == 16'b0000_0000_0000_0000); 
+				
+			// Set the Overflow Flag (2)
+			Flags[2] = ((~A[15] & ~B[15] & C[15]) | (A[15] & B[15] & ~C[15])); 
 
-					// Set the Carry(3), negative(1), and low(0) flags to 0
-					Flags[1:0] = 2'b00; Flags[3] = 1'b0;
+			// Set the Carry(3), negative(1), and low(0) flags to 0
+			Flags[1:0] = 2'b00; Flags[3] = 1'b0;
 		end
 		
 		4'b1000:

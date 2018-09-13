@@ -28,6 +28,7 @@ module ALUtest;
 	reg [15:0] A;
 	reg [15:0] B;
 	reg [7:0] Opcode;
+	reg Cin;
 
 	// Outputs
 	wire [15:0] C;
@@ -276,7 +277,7 @@ module ALUtest;
 								
 								ADDC:
 								begin
-									{expectedFlags[3], expectedC} = A + B + 1;
+									{expectedFlags[3], expectedC} = A + B + Cin;
 									if (C != expectedC)
 									begin
 										$display ("ERROR at time: %d", $time);
@@ -299,7 +300,7 @@ module ALUtest;
 								
 								ADDCU:
 								begin
-									{expectedFlags[3], expectedC} = A + B + 1;
+									{expectedFlags[3], expectedC} = A + B + Cin;
 									if (C != expectedC)
 									begin
 										$display ("ERROR at time: %d", $time);

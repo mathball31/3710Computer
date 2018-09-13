@@ -157,8 +157,13 @@ begin
 						Flags[4] = 1'b1; 
 					else Flags[4] = 1'b0;
 					
+					if ((A[15] | B[15]) & ~C[15]) // Check for overflow
+						Flags[2] = 1'b1;
+					else
+						Flags[2] = 1'b0;
+						
 					// The rest of the flags will be 0
-					Flags[2:0] = 3'b000;
+					Flags[1:0] = 2'b00;
 				end
 					
 				ADDC:
@@ -188,10 +193,16 @@ begin
 					// Set the zero flag(4)
 					if (C == 16'b0000_0000_0000_0000) 
 						Flags[4] = 1'b1; 
+						
 					else Flags[4] = 1'b0;
 					
+					if ((A[15] | B[15]) & ~C[15]) // Check for overflow
+						Flags[2] = 1'b1;
+					else
+						Flags[2] = 1'b0;
+						
 					// The rest of the flags will be 0
-					Flags[2:0] = 3'b000;
+					Flags[1:0] = 2'b00;
 				end
 				
 				SUB:
@@ -204,7 +215,7 @@ begin
 						Flags[4] = 1'b0;
 					
 					// Set the overflow flag (2)
-					if( (~A[15] & ~B[15] & C[15]) | (A[15] & B[15] & ~C[15]) ) 
+					if( (~A[15] & B[15] & ~C[15]) | (A[15] & ~B[15] & C[15]) ) 
 						Flags[2] = 1'b1;
 					else 
 						Flags[2] = 1'b0;
@@ -280,52 +291,47 @@ begin
 			// that way, when this is called, ALU knows immediately that it just wants to do an add immediate
 			// concatenate the last 4 bits of opcode with the last 4 bits of B in a temporary register
 			// ** treat B as the immediate value.  We will take care of it elsewhere.
-			begin
-					C = A + B;
-					
-					// Set the Zero flag (4)
-					if (C == 16'b0000_0000_0000_0000) 
-						Flags[4] = 1'b1;
-					else 
-						Flags[4] = 1'b0;
-						
-					// Set the Overflow Flag (2)
-					if((~A[15] & ~B[15] & C[15]) | (A[15] & B[15] & ~C[15])) 
-						Flags[2] = 1'b1;
-					else Flags[2] = 1'b0;
-
-					// Set the Carry(3), negative(1), and low(0) flags to 0
-					Flags[1:0] = 2'b00; Flags[3] = 1'b0;
-				end
+			C = A + B;
 			
+			// Set the Zero flag (4)
+			if (C == 16'b0000_0000_0000_0000) 
+				Flags[4] = 1'b1;
+			else 
+				Flags[4] = 1'b0;
+				
+			// Set the Overflow Flag (2)
+			if((~A[15] & ~B[15] & C[15]) | (A[15] & B[15] & ~C[15])) 
+				Flags[2] = 1'b1;
+			else Flags[2] = 1'b0;
+
+			// Set the Carry(3), negative(1), and low(0) flags to 0
+			Flags[1:0] = 2'b00; Flags[3] = 1'b0;		
 		end
 		
 		4'b0110:
 		begin
 			// for ADDUI, add unsigned immediate
 			// just like above in ADDI, except for unsigned integers
-			begin
 			// reserved for ADDI, add immediate, ONLY
 			// that way, when this is called, ALU knows immediately that it just wants to do an add immediate
 			// concatenate the last 4 bits of opcode with the last 4 bits of B in a temporary register
 			// ** treat B as the immediate value.  We will take care of it elsewhere.
-				C = A + B;
-				
-				// Set the Zero flag (4)
-				if (C == 16'b0000_0000_0000_0000) 
-					Flags[4] = 1'b1;
-				else 
-					Flags[4] = 1'b0;
-					
-				// Set the Overflow Flag (2)
-				if((~A[15] & ~B[15] & C[15]) | (A[15] & B[15] & ~C[15])) 
-					Flags[2] = 1'b1;
-				else Flags[2] = 1'b0;
 
-				// Set the Carry(3), negative(1), and low(0) flags to 0
-				Flags[1:0] = 2'b00; Flags[3] = 1'b0;
+			C = A + B;
 			
-			end
+			// Set the Zero flag (4)
+			if (C == 16'b0000_0000_0000_0000) 
+				Flags[4] = 1'b1;
+			else 
+				Flags[4] = 1'b0;
+				
+			if ((A[15] | B[15]) & ~C[15]) // Check for overflow
+				Flags[2] = 1'b1;
+			else
+				Flags[2] = 1'b0;
+						
+			// The rest of the flags will be 0
+			Flags[1:0] = 2'b00;
 		end
 			
 		4'b0111:

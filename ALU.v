@@ -215,10 +215,7 @@ begin
 						Flags[4] = 1'b0;
 					
 					// Set the overflow flag (2)
-					if( (~A[15] & B[15] & ~C[15]) | (A[15] & ~B[15] & C[15]) ) 
-						Flags[2] = 1'b1;
-					else 
-						Flags[2] = 1'b0;
+					Flags[2] = ((~A[15] & B[15] & C[15]) | (A[15] & ~B[15] & ~C[15]));
 					
 					// Set the Carry(3), negative(1), and low(0) flags to 0
 					Flags[1:0] = 2'b00; Flags[3] = 1'b0;

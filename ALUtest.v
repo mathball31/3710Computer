@@ -92,7 +92,8 @@ module ALUtest;
 		.B(B), 
 		.C(C), 
 		.Opcode(Opcode), 
-		.Flags(Flags)
+		.Flags(Flags),
+		.Cin(Cin)
 	);
 
 	initial
@@ -264,8 +265,9 @@ module ALUtest;
 										#5 -> terminate_sim;
 									end
 									
-									expectedFlags[4] = (C == 16'b0000_0000_0000_0000); 
-									expectedFlags[2:0] = 3'b000;
+									expectedFlags[4] = (C == 16'b0000_0000_0000_0000);
+									expectedFlags[2] = ((A[15] | B[15]) & ~C[15]);
+									expectedFlags[1:0] = 2'b00;
 									if (Flags != expectedFlags)
 									begin
 										$display ("ERROR at time: %d", $time);										
@@ -331,7 +333,7 @@ module ALUtest;
 									
 									expectedFlags[4] = (C == 16'b0000_0000_0000_0000);
 									// Check for overflow
-									expectedFlags[2] = ((~A[15] && ~B[15] && C[15]) || (A[15] && B[15] && ~C[15]));
+									expectedFlags[2] = ((~A[15] && B[15] && C[15]) || (A[15] && ~B[15] && ~C[15]));
 									// Set the Carry(3), negative(1), and low(0) flags to 0
 									expectedFlags[1:0] = 2'b00; 
 									expectedFlags[3] = 1'b0;

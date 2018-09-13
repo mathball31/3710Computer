@@ -53,9 +53,9 @@ endmodule
 /********/
 module RegBank(ALUBus, r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15, regEnable, clk, reset);
 	input clk, reset;
-	input [3:0] ALUBus;
+	input [15:0] ALUBus;
 	input [15:0] regEnable;
-	output [3:0] r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15;
+	output [15:0] r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15;
 
 	
 Register Inst0(

@@ -54,11 +54,39 @@ regfile uut (
 	.reset(reset)
 );
 
+// Is this necessary? ~ Bev
 ALU uut (
 	.A(r0),
 )
 
 /**
+	This code below is directly taken from my version of Lab 6 of 3700
+	It's commented so it doesn't screw anything up with it's wrong variables and all that\
+	
+		integer temp = 6'b0000000;
+	
+	initial 
+	begin
+		// Initialize Inputs
+		R = 0;
+		clk = 0;
+		data = 4'b0000;
+	end
+		
+	always clk = #10 ~clk;
+	
+	always @(posedge clk)
+		begin
+			$display("state = %b	r1 = %b	r2 = %b	rout = %b", state, r1, r2, rout);
+		end
+
+**/
+
+endmodule
+
+/**
+	This will be a separate module from the actual test
+
 	For the FSM, taken from the code used in 3700
 		Recall that each register should be enabled only when in use
 		EX: R0 will be enabled in the state where R0 = R0 + R1
@@ -99,4 +127,90 @@ ALU uut (
 		and computing them
 		May need more inputs or variables for opcodes and displays
 			
+**/
+
+
+
+/**
+	Code pasted here is gotten directly from my Lab 6 from 3700
+	In comments for the same reason the other code above is
+**/
+	
+/**	
+module FSM(clk, R, data, cath, an,
+	state, r1, r2, rout);
+	
+	input clk, R;			// clock and reset
+	input [3:0] data;
+	output [1:7] cath;
+	output [3:0] an;
+	
+	output reg [3:0] state, r1, r2;
+	output [3:0] rout;
+	
+	reg reset;
+	reg [1:0] aluc;
+	// reg [3:0] state;
+	// reg [3:0] r1, r2, rout;
+	wire [3:0] aluout;		// aluout is the output of the ALU - in this case C
+	
+	parameter ADD = 2'b00, OR = 2'b01, NOT = 2'b10, XOR = 2'b11;
+	
+	initial
+		begin
+			state = 4'b0000;
+			r1 = 4'b0000;
+			r2 = 4'b0000;
+		end
+	
+	always @(posedge clk)
+		begin
+			if(R == 1'b1)
+				reset = 1'b1;
+			else	// R = 1'b0
+				reset = 1'b0;
+		end
+		
+	always @(posedge clk)
+		begin
+			if(reset == 1'b1)
+				state = 4'b0000;
+			else
+				begin
+					state = state + 4'b1;
+					if(state > 4'b1001)
+						state = 4'b1001;		// keep it at state 9
+
+					case(state)
+						1:		// reads the data from an external source and loads it into r1
+							r1 = data;
+						2: // loads the number 3 into r2
+							r2 = 4'b0011;
+						3: // add r1, r2 and store to rout
+							aluc = ADD;
+						4: // set r2 = rout
+							r2 = rout;
+						5: // bitwise OR of r1, r2
+							aluc = OR;
+						6: // r1 = rout
+							r1 = rout;
+						7: // not r1, set it to rout
+							aluc = NOT;
+						8: // r1 = rout
+							r1 = rout;
+						9: // XOR r1, r2, store in rout, keep the display as is
+							aluc = XOR;
+						default:
+							begin
+								r1 = 4'b0000;
+								r2 = 4'b0000;
+							end
+					endcase
+				end
+		end
+
+	Display disp(clk, rout, cath, an);
+	ALU alu(r1, r2, aluc, rout);
+	
+endmodule
 **/

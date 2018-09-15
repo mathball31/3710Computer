@@ -113,3 +113,4 @@ set_global_assignment -name VERILOG_FILE regfile.v
 set_global_assignment -name VERILOG_FILE datapath.v
 set_global_assignment -name VERILOG_FILE hexTo7Seg.v
 set_global_assignment -name VERILOG_FILE ALUdisplay.v
+set_global_assignment -name VERILOG_FILE FSMForRegFileTest.v

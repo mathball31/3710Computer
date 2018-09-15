@@ -190,6 +190,9 @@ module FSM(clk, R, data, cath, an,
 							r1 = RegBank reg(tempVal, 16'b0000_0000_0000_0001, clk, R);		// r0
 							r2 = RegBank reg(tempVal, 16'b0000_0000_0000_0010, clk, R);		// r1
 							
+							// RegBank reg0(tempVal, r0-r15 outputs, 16'b0000_0000_0000_0001, clk, R);
+							// ^^ syntax probably looks more like that
+							
 							// I don't know if this is the right syntax, but that's how I imagine it
 							// may have something to do with all the outputs but I dunno
 							// regEnable works by flipping the corresponding bit to the register

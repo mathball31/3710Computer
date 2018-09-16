@@ -62,7 +62,6 @@ parameter LSH = 4'b0100;
 
 /*
 parameter ADDCUI = 8'b???? immHi;
-parameter CMPI = immHi;	1011
 parameter CMPUI = 8'b??? immHi;
 parameter RSH = 8'b???
 parameter RSHI = 8'b???? immHi;
@@ -248,8 +247,6 @@ begin
 //						else 
 //							Flags[1:0] = 2'b00;
 //					end
-//					
-//					
 //					
 //
 //					// If A is positive, and different from B, don't set negative and low flags

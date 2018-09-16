@@ -4,6 +4,11 @@
 // Keep code commented when pushing if it doesn't compile so it doesn't break other things. :)
 
 
+/**
+	Update 2018.09.16:
+		Datapath is mostly complete - use that instead of RegBank in testing, so REVAMP EVERYTHING (YAY)
+**/
+
 
 
 /**
@@ -241,3 +246,4 @@ module FSMForRegFileTest(clk, reset, data, cath, an,
 	// ALU alu(r1, r2, aluc, rout);
 	
 endmodule
+**/

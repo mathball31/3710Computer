@@ -19,15 +19,20 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 
-module datapath(Opcode, Cin, RegEnable, Clk, Reset, Flags); // needs output -- Michelle
+module datapath(Opcode, Cin, RegEnable, Clk, Reset, Flags, AluBus); // needs output -- Michelle
 	input [15:0] Opcode, RegEnable;
+		// Opcode: [15:12], [7:4] = operation code for ALU
+		//				[11:8] = number for input A
+		//				[3:0] = number for input B
+	
 	input Clk, Cin, Reset;
 	// add output
 	
 	output [4:0] Flags;
+	output [15:0] AluBus;
 	
 	wire [15:0] r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15;
-	wire [15:0] AluBus, muxAout, muxBout;
+	wire [15:0] muxAout, muxBout;
 
 	RegBank regFile(AluBus, r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15, RegEnable, Clk, Reset);
 

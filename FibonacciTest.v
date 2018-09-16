@@ -1,4 +1,18 @@
-'timescale 1ns / 1ps
+/*'timescale 1ns / 1ps
+
+
+
+
+
+
+
+
+
+Same as FSMForRegFileTest
+Doesn't compile
+
+
+
 
 
 module FibonacciTest;
@@ -58,7 +72,7 @@ regfile uut (
 ALU uut (
 	.A(r0),
 )
-
+*/
 /**
 	This code below is directly taken from my version of Lab 6 of 3700
 	It's commented so it doesn't screw anything up with it's wrong variables and all that\
@@ -82,7 +96,7 @@ ALU uut (
 
 **/
 
-endmodule
+//endmodule
 
 /**
 	This will be a separate module from the actual test

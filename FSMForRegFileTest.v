@@ -1,4 +1,49 @@
 /**
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Commented out so it would compile
+Don't push code to master that doesn't compile
+--Dirk
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	For the FSM, taken from the code used in 3700
 		Recall that each register should be enabled only when in use
 		EX: R0 will be enabled in the state where R0 = R0 + R1
@@ -38,7 +83,7 @@
 			
 **/
 	
-
+/*
 module FSMForRegFileTest(clk, reset, data, cath, an,
 	state, r1, r2, rout);
 	
@@ -109,11 +154,11 @@ module FSMForRegFileTest(clk, reset, data, cath, an,
 						state = 4'b1001;		// keep it at the last state?
 
 					case(state)
-					/* 1. You can preset the values in the register file. *** will choose this for now
+					* 1. You can preset the values in the register file. *** will choose this for now
 					 * 2.You can equip the register file with a load capability and use the FSM to load the values.
 					 * 3.You can design the FSM to set up the controls that will simulate an add immediate 
 					 *    instructionLCDFSMALUOP that adds R0 to one value and writes it back to R0, 
-					 *    then do the same with the the second valueand register R1.  **/
+					 *    then do the same with the the second valueand register R1.  
 						0:		// load values of registers 0 and 1
 							begin
 							r1 = RegBank reg(tempVal, 16'b0000_0000_0000_0001, clk, R);		// r0
@@ -215,4 +260,4 @@ module FSMForRegFileTest(clk, reset, data, cath, an,
 	ALU alu(r1, r2, aluc, rout);
 	
 endmodule
-**/
+*/

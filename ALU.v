@@ -259,9 +259,8 @@ begin
 		begin
 			// reserved for ADDI, add immediate, ONLY
 			// that way, when this is called, ALU knows immediately that it just wants to do an add immediate
-			// concatenate the last 4 bits of opcode with the last 4 bits of B in a temporary register
-			// ** treat B as the immediate value.  We will take care of it elsewhere.
-			C = A + B;
+			// in immediate instructions, the low bit of Opcode is the immediate
+			C = A + Opcode[7:0];
 			
 			// Set the Zero flag (4)
 			if (C == 16'b0000_0000_0000_0000) 
@@ -284,10 +283,12 @@ begin
 			// just like above in ADDI, except for unsigned integers
 			// reserved for ADDI, add immediate, ONLY
 			// that way, when this is called, ALU knows immediately that it just wants to do an add immediate
+			// in immediate instructions, the low bit of Opcode is the immediate
+
 			// concatenate the last 4 bits of opcode with the last 4 bits of B in a temporary register
 			// ** treat B as the immediate value.  We will take care of it elsewhere.
 
-			C = A + B;
+			C = A + {8'b0, Opcode[7:0]};
 			
 			// Set the Zero flag (4)
 			if (C == 16'b0000_0000_0000_0000) 
@@ -312,7 +313,7 @@ begin
 			// that way, when this is called, ALU knows immediately that it just wants to do an add immediate
 			// concatenate the last 4 bits of opcode with the last 4 bits of B in a temporary register
 			// ** treat B as the immediate value.  We will take care of it elsewhere.
-			C = A + B + Cin;
+			C = A + Opcode[7:0] + Cin;
 			
 			// Set the Zero flag (4)
 			Flags[4] = (C == 16'b0000_0000_0000_0000); 
@@ -331,7 +332,7 @@ begin
 				LSHI:
 				// Left shift of A by B bits
 				begin
-					C = A << B;
+					C = A << Opcode[7:0];
 					if (C == 16'b0000_0000_0000_0000)
 						Flags[4] = 1'b1;
 					else

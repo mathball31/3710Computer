@@ -73,7 +73,7 @@ parameter ARSH = 8'b???
 OR, XOR, NOT, LSH, LSHI, RSH, RSHI, ALSH, ARSH, NOP/WAIT      */
 
 
-always @(A, B, Opcode)
+always @(A, B, Opcode, Cin)
 begin
 	C = 16'bx;
 	Flags = 5'bx;
@@ -220,7 +220,6 @@ begin
 					Flags[1:0] = 2'b00; Flags[3] = 1'b0;
 				end
 				
-				// Take a look at compare... we think it needs some work --Dirk & Michelle
 				CMP:
 				begin
 					// Is this differenct from the explicit sign checks also coded below?
@@ -238,27 +237,6 @@ begin
 					C = 16'b0000_0000_0000_0000;
 					Flags[3:2] = 2'b00;
 				end
-					
-					// both positive or both negative
-//					else if( A[15] == B[15] )
-//					begin
-//						if (A < B) 
-//							Flags[1:0] = 2'b11;
-//						else 
-//							Flags[1:0] = 2'b00;
-//					end
-//					
-//
-//					// If A is positive, and different from B, don't set negative and low flags
-//					else if (A[15] == 1'b1)
-//						Flags[1:0] = 2'b11;
-//						
-//					// If A is negative, and different from B, set the low flag
-//					else 
-//						Flags[1:0] = 2'b01;
-//						
-//					Flags[4:2] = 3'b000; 
-//				end
 				
 				CMPU:
 				begin
@@ -266,8 +244,6 @@ begin
 					Flags[3:1] = 3'b000;
 					Flags[4] = (A == B);
 					C = 16'b0000_0000_0000_0000;
-						
-					
 				end
 				
 				default: 		// used for WAIT and NOP - they're the same thing
@@ -372,75 +348,22 @@ begin
 						Flags[4] = 1'b0;
 					Flags [3:0] = 4'b0000;
 				end
-			/*	
-			RSHI:
-				// Right shift of A by B bits
-				begin
-				C = A >> B;
-				if (C == 16'b0000_0000_0000_0000)
-					Flags[4] = 1'b1;
-				else
-					Flags[4] = 1'b0;
-				Flags [3:0] = 4'b0000;
-				end
 				
-			RSH:
+			default: 		// used for WAIT and NOP - they're the same thing
 				begin
-				// Right shift of A by 1 bit (no sign extension)
-				C = A >> 1;
-				if (C == 16'b0000_0000_0000_0000)
-					Flags[4] = 1'b1;
-				else
-					Flags[4] = 1'b0;
-				Flags [3:0] = 4'b0000;
-				end
-			
-			ALSH:
-				begin
-				// Implement left shift of A by 1 bit (with sign extension)
-				if (A[15] == 1'b1)
-					begin
-					C = A << 1;
-					C[15] = 1'b1;
-					// This result can't be zero
-					Flags[4] = 1'b0;
-					end
-				else
-					begin
-					C = A << 1;
-					if (C == 16'b0000_0000_0000_0000)
-						Flags[4] = 1'b1;
-					else
-						Flags[4] = 1'b0;
-					end
-				Flags[3:0] = 4'b0000;
-				end
-				
-			ARSH:
-				begin
-				// right shift of A by 1 bit (with sign extension)
-					if (A[15] == 1'b1)
-					begin
-						C = A >> 1;
-						C[15] = 1'b1;
-						// This result can't be zero
-						Flags[4] = 1'b0;
-					end else
-					begin
-						C = A >> 1;
-						if (C == 16'b0000_0000_0000_0000)
-						begin
-							Flags[4] = 1'b1;
-						end else
-						begin
-							Flags[4] = 1'b0;
-						end
-					end
-					Flags[3:0] = 4'b0000;
-				end
-				*/
+					// when there is no opcode to use
+					C = 16'bx;
+					Flags = 5'b00000;
+				end	
 			endcase
 		end
+		
+		default: 		// used for WAIT and NOP - they're the same thing
+				begin
+					// when there is no opcode to use
+					C = 16'bx;
+					Flags = 5'b00000;
+				end
 	endcase
 end
 

@@ -86,11 +86,8 @@ begin
 				begin
 					C = A & B;
 					
-					// YO it's easier (& better form) to write Flags[4] = (C == 16'b0000_0000_0000_0000);
-					if (C == 16'b0000_0000_0000_0000)
-						Flags[4] = 1'b1;
-					else
-						Flags[4] = 1'b0;
+					Flags[4] = (C == 16'b0000_0000_0000_0000);
+					
 					// Set the carry(3), overflow(2), negative(1), and low(0) flags to 0
 					Flags[3:0] = 4'b0000;
 				end
@@ -98,20 +95,17 @@ begin
 				OR:
 				begin
 					C = A | B;
-					if (C == 16'b0000_0000_0000_0000)
-						Flags[4] = 1'b1;
-					else
-						Flags[4] = 1'b0;
+					
+					Flags[4] = (C == 16'b0000_0000_0000_0000);
+					
 					Flags[3:0] = 4'b0000;
 				end
 					
 				XOR:
 				begin
 					C = A ^ B;
-					if (C == 16'b0000_0000_0000_0000)
-						Flags[4] = 1'b1;
-					else
-						Flags[4] = 1'b0;
+					
+					Flags[4] = (C == 16'b0000_0000_0000_0000);
 						
 					Flags[3:0] = 4'b0000;
 				end
@@ -119,10 +113,8 @@ begin
 				NOT:
 				begin
 					C = ~A;
-					if (C == 16'b0000_0000_0000_0000)
-						Flags[4] = 1'b1;
-					else
-						Flags[4] = 1'b0;
+					
+					Flags[4] = (C == 16'b0000_0000_0000_0000);
 						
 					Flags[3:0] = 4'b0000;
 				end
@@ -132,15 +124,10 @@ begin
 					C = A + B;
 					
 					// Set the Zero flag (4)
-					if (C == 16'b0000_0000_0000_0000) 
-						Flags[4] = 1'b1;
-					else 
-						Flags[4] = 1'b0;
+					Flags[4] = (C == 16'b0000_0000_0000_0000);
 						
 					// Set the Overflow Flag (2)
-					if((~A[15] & ~B[15] & C[15]) | (A[15] & B[15] & ~C[15])) 
-						Flags[2] = 1'b1;
-					else Flags[2] = 1'b0;
+					Flags[2] = ((~A[15] & ~B[15] & C[15]) | (A[15] & B[15] & ~C[15]));
 
 					// Set the Carry(3), negative(1), and low(0) flags to 0
 					Flags[1:0] = 2'b00; Flags[3] = 1'b0;
@@ -152,14 +139,9 @@ begin
 					{Flags[3], C} = A + B;
 					
 					// Set the 0 flag(4)
-					if (C == 16'b0000_0000_0000_0000)
-						Flags[4] = 1'b1; 
-					else Flags[4] = 1'b0;
+					Flags[4] = (C == 16'b0000_0000_0000_0000);
 					
-					if ((A[15] | B[15]) & ~C[15]) // Check for overflow
-						Flags[2] = 1'b1;
-					else
-						Flags[2] = 1'b0;
+					Flags[2] = ((A[15] | B[15]) & ~C[15]); // Check for overflow
 						
 					// The rest of the flags will be 0
 					Flags[1:0] = 2'b00;
@@ -170,15 +152,10 @@ begin
 					{Flags[3], C} = A + B + Cin;
 					
 					// Set the Zero flag (4)
-					if (C == 16'b0000_0000_0000_0000) 
-						Flags[4] = 1'b1;
-					else 
-						Flags[4] = 1'b0;
+					Flags[4] = (C == 16'b0000_0000_0000_0000);
 						
 					// Set the Overflow Flag (2)
-					if((~A[15] & ~B[15] & C[15]) | (A[15] & B[15] & ~C[15])) 
-						Flags[2] = 1'b1;
-					else Flags[2] = 1'b0;
+					Flags[2] = ((~A[15] & ~B[15] & C[15]) | (A[15] & B[15] & ~C[15])); 
 
 					// Set the negative(1) and low(0) flags to 0
 					Flags[1:0] = 2'b00; 
@@ -190,15 +167,9 @@ begin
 					{Flags[3], C} = A + B + Cin;
 					
 					// Set the zero flag(4)
-					if (C == 16'b0000_0000_0000_0000) 
-						Flags[4] = 1'b1; 
-						
-					else Flags[4] = 1'b0;
+					Flags[4] = (C == 16'b0000_0000_0000_0000); 
 					
-					if ((A[15] | B[15]) & ~C[15]) // Check for overflow
-						Flags[2] = 1'b1;
-					else
-						Flags[2] = 1'b0;
+					Flags[2] = ((A[15] | B[15]) & ~C[15]); // Check for overflow
 						
 					// The rest of the flags will be 0
 					Flags[1:0] = 2'b00;
@@ -208,10 +179,7 @@ begin
 				begin
 					C = A - B;
 					// Set the zero(4) flag
-					if (C == 16'b0000_0000_0000_0000) 
-						Flags[4] = 1'b1;
-					else 
-						Flags[4] = 1'b0;
+					Flags[4] = (C == 16'b0000_0000_0000_0000); 
 					
 					// Set the overflow flag (2)
 					Flags[2] = ((~A[15] & B[15] & C[15]) | (A[15] & ~B[15] & ~C[15]));
@@ -229,10 +197,7 @@ begin
 					else 
 						Flags[1:0] = 2'b00;
 						
-					if ($signed(A) == $signed(B))
-						Flags[4] = 1'b1;  // set the zero flag
-					else
-						Flags[4] = 1'b0;
+					Flags[4] = ($signed(A) == $signed(B)); // set the zero flag
 						
 					C = 16'b0000_0000_0000_0000;
 					Flags[3:2] = 2'b00;
@@ -263,15 +228,10 @@ begin
 			C = A + Opcode[7:0];
 			
 			// Set the Zero flag (4)
-			if (C == 16'b0000_0000_0000_0000) 
-				Flags[4] = 1'b1;
-			else 
-				Flags[4] = 1'b0;
+			Flags[4] = (C == 16'b0000_0000_0000_0000); 
 				
 			// Set the Overflow Flag (2)
-			if((~A[15] & ~B[15] & C[15]) | (A[15] & B[15] & ~C[15])) 
-				Flags[2] = 1'b1;
-			else Flags[2] = 1'b0;
+			Flags[2] = ((~A[15] & ~B[15] & C[15]) | (A[15] & B[15] & ~C[15])); 
 
 			// Set the Carry(3), negative(1), and low(0) flags to 0
 			Flags[1:0] = 2'b00; Flags[3] = 1'b0;		
@@ -291,15 +251,9 @@ begin
 			C = A + {8'b0, Opcode[7:0]};
 			
 			// Set the Zero flag (4)
-			if (C == 16'b0000_0000_0000_0000) 
-				Flags[4] = 1'b1;
-			else 
-				Flags[4] = 1'b0;
+			Flags[4] =  (C == 16'b0000_0000_0000_0000); 
 				
-			if ((A[15] | B[15]) & ~C[15]) // Check for overflow
-				Flags[2] = 1'b1;
-			else
-				Flags[2] = 1'b0;
+			Flags[2] = ((A[15] | B[15]) & ~C[15]); // Check for overflow
 						
 			// The rest of the flags will be 0
 			Flags[1:0] = 2'b00;
@@ -333,20 +287,16 @@ begin
 				// Left shift of A by B bits
 				begin
 					C = A << Opcode[7:0];
-					if (C == 16'b0000_0000_0000_0000)
-						Flags[4] = 1'b1;
-					else
-						Flags[4] = 1'b0;
+					Flags[4] = (C == 16'b0000_0000_0000_0000);
+			
 					Flags[3:0] = 4'b0000;
 				end
 				LSH:
 				begin
 					// Left shift of A by 1 bit (no sign extension)
 					C = A << 1;
-					if (C == 16'b0000_0000_0000_0000)
-						Flags[4] = 1'b1;
-					else
-						Flags[4] = 1'b0;
+					Flags[4] = (C == 16'b0000_0000_0000_0000);
+				
 					Flags [3:0] = 4'b0000;
 				end
 				

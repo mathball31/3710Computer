@@ -8,11 +8,9 @@ module FSMForRegFileTest(display, state, rout);		// outputs
 	
 	reg resetFlag, clk, reset;
 	reg [4:0] flags;
-	wire [4:0] flags_temp;
+	wire [4:0] flags_temp;		// connects the output of datapath to the register
 	reg [15:0] initVal;		// initial value to load into r0, used to be tempVal
 	reg cin;
-	//reg load;		// tells when to load the value into r0
-	// codes to enable the specific register
 	reg [15:0] addCode, enCode;		// the codes to execute
 	integer i;
 	
@@ -34,6 +32,12 @@ module FSMForRegFileTest(display, state, rout);		// outputs
 	parameter r15add = 16'b0000_1111_0101_1110;			// r15 and r15
 	
 	// enable codes
+	// opcodes and registers
+	// This variable encases all of the opcodes and the two registers for adding
+	// from [15:12] and [7:4], those are the opcodes
+	// while [11:8] is for the A input and [3:0] is for the B input
+	// it will make more sense to check this out in the datapath file
+	// All operations are add, so this doesn't change much - just the registers
 	parameter r0_en = 16'b0000_0000_0000_0001;
 	parameter r1_en = 16'b0000_0000_0000_0010;
 	parameter r2_en = 16'b0000_0000_0000_0100;
@@ -58,7 +62,6 @@ module FSMForRegFileTest(display, state, rout);		// outputs
 		initVal = 16'b0000_0000_0000_0001;
 		flags = 5'b00000;
 		cin = 1'b0;             // no carry in initially, but should be set if needed.
-//			load = 1'b0;
 		clk = 1;
 		reset = 1;
 		state = 4'b0000;
@@ -69,22 +72,11 @@ module FSMForRegFileTest(display, state, rout);		// outputs
 			$display("state = %b   rout = %b  ", state, rout);
 			#5;
 		end
-		
-		
-		// opcodes and registers
-		// This variable encases all of the opcodes and the two registers for adding
-		// from [15:12] and [7:4], those are the opcodes
-		// while [11:8] is for the A input and [3:0] is for the B input
-		// it will make more sense to check this out in the datapath file
-		// All operations are add, so this doesn't change much - just the registers
-		
-		
 	end
 
 	
 	// for each rising positive edge of the clock
 	// check to see if the reset button has been pressed
-	
 	always @(posedge clk)
 	begin
 		if(reset == 1'b1)
@@ -106,8 +98,8 @@ module FSMForRegFileTest(display, state, rout);		// outputs
 		else
 		begin
 			state = state + 4'b0001;	// increase the state by one
-											// There is no need to add this to every case - it already happens
-											// every time the positive edge rises
+												// There is no need to add this to every case - it already happens
+												// every time the positive edge rises
 			if(state >= 4'b1111)
 				state = 4'b1111;		// keep it at the last state so can be displayed
 			
@@ -202,12 +194,6 @@ module FSMForRegFileTest(display, state, rout);		// outputs
 			endcase
 		end
 	end
-
-			// load the value into r0 once
-			// TODO this is causing compiler issues and I'm trying to figure it out - Bev
-//			if(load == 1'b1)
-//				RegBank reg0( initVal, r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15, enCode, clk, reset);
-//		RegBank reg0( initVal, r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15, 16'b0000_0000_0000_0001, clk, reset);
 		
 		// at the end of the always block, display the value
 		// Do it before the datapath so all values can be displayed
@@ -219,5 +205,4 @@ module FSMForRegFileTest(display, state, rout);		// outputs
 		// calling other modules inside an always block doesn't work - which is why the FSM this was based on
 		// had everything OUTside of the always block and used variables for the parameters. 
 		datapath dp(addCode, cin, clk, reset, flags_temp, rout);
-		
 endmodule

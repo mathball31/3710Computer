@@ -220,6 +220,7 @@ begin
 					Flags[4] = (C == 16'b0);
 					Flags[3:0] = 4'b0;
 					C = A;
+				end
 				
 				default: 		// used for WAIT and NOP - they're the same thing
 				begin

@@ -198,6 +198,7 @@ module FSMForRegFileTest(
 		
 		// doing this will probably cause the program to load the value each time, but cannot think of another way to do it
 		RegBank reg0( initVal, r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15, r0_en, clk, reset);
+		RegBank reg1( initVal, r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15, r1_en, clk, reset);
 
 		
 		// at the end of the always block, display the value

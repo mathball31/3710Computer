@@ -99,32 +99,34 @@ module ALUtest;
 	);
 
 	//check results
-	initial
-	@ (checkResult) begin
-		if (C != expectedC)
+	always @(checkResult) 
+	begin
+		if (C !== expectedC)
 		begin
 			$display ("ERROR at time: %d", $time);
-			$display ("Expected value: %d, Actual Value: %d, Opcode: %b", expectedC, C, Opcode);
+			$display ("A: %d, %b; B: %d, %b", A, A, B, B);
+			$display ("Expected value: %d, %b; Actual Value: %d, %b, Opcode: %b", expectedC, expectedC, C, C, Opcode);
 			error = 1;
 			#5 -> terminate_sim;
 		end
 	end
 	
 	//check flags
-	initial
-	@ (checkFlags) begin
-		if (Flags != expectedFlags)
+	always @ (checkFlags) 
+	begin
+		if (Flags !== expectedFlags)
 		begin
-			$display ("ERROR at time: %d", $time);										
-			$display ("Expected value: %d, Actual Value: %d, Opcode: %b", expectedC, C, Opcode);
+			$display ("ERROR at time: %d", $time);
+			$display ("A: %d, %b; B: %d, %b", A, A, B, B);
+			$display ("Expected value: %d, %b; Actual Value: %d, %b, Opcode: %b", expectedC, expectedC, C, C, Opcode);
 			$display ("Expected flag %b, Actual flag %b", expectedFlags, Flags);
 			error = 1;
 			#5 -> terminate_sim;
 		end
 	end
 		
-	initial
-	@ (terminate_sim) begin
+	initial @(terminate_sim) 
+	begin
 		$display("Terminating simulation");
 		if (error == 0)
 		begin
@@ -150,7 +152,7 @@ module ALUtest;
 		Opcode = 0;
 
 		// random simulation
-		for (i = 0; i < 10; i = i+1)
+		for (i = 0; i < 10000; i = i+1)
 		begin
 			#10;
 			A = $random % 1000;
@@ -159,7 +161,7 @@ module ALUtest;
 			expectedFlags = 5'bx;
 
 			//check all opcodes
-			for( Opcode = 0; Opcode < 8'b1111111; Opcode = Opcode+1)
+			for( {Opcode, Cin} = 0; {Opcode, Cin} < 9'b11111111; {Opcode, Cin} = {Opcode, Cin} +1)
 			begin
 				//skip non valid opcodes
 				while (!((Opcode[7:6] == 2'b01 && Opcode[5] ^ Opcode[4]) || Opcode[6:4] == 0 || Opcode[7:5] == 4'b1111))
@@ -222,14 +224,14 @@ module ALUtest;
 							
 							ADD:
 							begin
-								expectedC = A + B;
+								{expectedFlags[3], expectedC} = A + B;
 								#5 -> checkResult;
 								
 								expectedFlags[4] = (C == 16'b0000_0000_0000_0000);
 								// Check for overflow
 								expectedFlags[2] = ((~A[15] && ~B[15] && C[15]) || (A[15] && B[15] && ~C[15]));
 								// Set the Carry(3), negative(1), and low(0) flags to 0
-								expectedFlags[1:0] = 2'b00; expectedFlags[3] = 1'b0;
+								expectedFlags[1:0] = 2'b00; 
 								#5 -> checkFlags;									
 							end
 							
@@ -262,7 +264,8 @@ module ALUtest;
 								#5 -> checkResult;
 								
 								expectedFlags[4] = (C == 16'b0000_0000_0000_0000);
-								expectedFlags[2:0] = 3'b000;
+								expectedFlags[2] = ((A[15] | B[15]) & ~C[15]);
+								expectedFlags[1:0] = 2'b00;
 								#5 -> checkFlags;	
 							end
 							
@@ -315,14 +318,14 @@ module ALUtest;
 						// reserved for ADDI, add immediate, ONLY
 						// that way, when this is called, ALU knows immediately that it just wants to do an add immediate
 						// concatenate (sp?) the last 4 bits of opcode with the last 4 bits of B in a temporary register
-						expectedC = A + Opcode[7:0];
+						{expectedFlags[3], expectedC} = A + Opcode[7:0];
 						#5 -> checkResult;
 						
 						expectedFlags[4] = (C == 16'b0000_0000_0000_0000);
 						// Check for overflow
 						expectedFlags[2] = ((~A[15] && ~B[15] && C[15]) || (A[15] && B[15] && ~C[15]));
 						// Set the Carry(3), negative(1), and low(0) flags to 0
-						expectedFlags[1:0] = 2'b00; expectedFlags[3] = 1'b0;
+						expectedFlags[1:0] = 2'b00; 
 						#5 -> checkFlags;	
 					end
 					
@@ -359,7 +362,7 @@ module ALUtest;
 					4'b1000:
 					begin
 						// opcode is for ALL shifts
-						case (Opcode[3:0])
+						case (Opcode[7:4])
 							LSHI:
 							// Left shift of A by B bits
 							begin

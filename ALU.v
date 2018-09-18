@@ -121,7 +121,7 @@ begin
 					
 				ADD:
 				begin
-					C = A + B;
+					{Flags[3], C} = A + B;
 					
 					// Set the Zero flag (4)
 					Flags[4] = (C == 16'b0000_0000_0000_0000);
@@ -130,7 +130,7 @@ begin
 					Flags[2] = ((~A[15] & ~B[15] & C[15]) | (A[15] & B[15] & ~C[15]));
 
 					// Set the Carry(3), negative(1), and low(0) flags to 0
-					Flags[1:0] = 2'b00; Flags[3] = 1'b0;
+					Flags[1:0] = 2'b00; 
 				end
 				
 				ADDU:
@@ -185,7 +185,8 @@ begin
 					Flags[2] = ((~A[15] & B[15] & C[15]) | (A[15] & ~B[15] & ~C[15]));
 					
 					// Set the Carry(3), negative(1), and low(0) flags to 0
-					Flags[1:0] = 2'b00; Flags[3] = 1'b0;
+					Flags[1:0] = 2'b00; 
+					Flags[3] = 1'b0;
 				end
 				
 				CMP:
@@ -226,7 +227,7 @@ begin
 			// reserved for ADDI, add immediate, ONLY
 			// that way, when this is called, ALU knows immediately that it just wants to do an add immediate
 			// in immediate instructions, the low bit of Opcode is the immediate
-			C = A + Opcode[7:0];
+			{Flags[3], C} = A + Opcode[7:0];
 			
 			// Set the Zero flag (4)
 			Flags[4] = (C == 16'b0000_0000_0000_0000); 
@@ -235,7 +236,7 @@ begin
 			Flags[2] = ((~A[15] & ~B[15] & C[15]) | (A[15] & B[15] & ~C[15])); 
 
 			// Set the Carry(3), negative(1), and low(0) flags to 0
-			Flags[1:0] = 2'b00; Flags[3] = 1'b0;		
+			Flags[1:0] = 2'b00; 
 		end
 		
 		4'b0110:
@@ -249,7 +250,7 @@ begin
 			// concatenate the last 4 bits of opcode with the last 4 bits of B in a temporary register
 			// ** treat B as the immediate value.  We will take care of it elsewhere.
 
-			C = A + {8'b0, Opcode[7:0]};
+			{Flags[3], C} = A + {8'b0, Opcode[7:0]};
 			
 			// Set the Zero flag (4)
 			Flags[4] =  (C == 16'b0000_0000_0000_0000); 
@@ -268,7 +269,7 @@ begin
 			// that way, when this is called, ALU knows immediately that it just wants to do an add immediate
 			// concatenate the last 4 bits of opcode with the last 4 bits of B in a temporary register
 			// ** treat B as the immediate value.  We will take care of it elsewhere.
-			C = A + Opcode[7:0] + Cin;
+			{Flags[3], C} = A + Opcode[7:0] + Cin;
 			
 			// Set the Zero flag (4)
 			Flags[4] = (C == 16'b0000_0000_0000_0000); 
@@ -277,17 +278,17 @@ begin
 			Flags[2] = ((~A[15] & ~B[15] & C[15]) | (A[15] & B[15] & ~C[15])); 
 
 			// Set the Carry(3), negative(1), and low(0) flags to 0
-			Flags[1:0] = 2'b00; Flags[3] = 1'b0;
+			Flags[1:0] = 2'b00; 
 		end
 		
 		4'b1000:
 		begin
 			// opcode is for ALL shifts
-			case (Opcode[3:0])
+			case (Opcode[7:4])
 				LSHI:
 				// Left shift of A by B bits
 				begin
-					C = A << Opcode[7:0];
+					C = A << Opcode[3:0];
 					Flags[4] = (C == 16'b0000_0000_0000_0000);
 			
 					Flags[3:0] = 4'b0000;

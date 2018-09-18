@@ -190,8 +190,6 @@ begin
 				
 				CMP:
 				begin
-					// Is this differenct from the explicit sign checks also coded below?
-					// Does this method have redudant code?
 					if( $signed(A) < $signed(B) ) 
 						Flags[1:0] = 2'b11;
 					else 
@@ -206,8 +204,11 @@ begin
 				CMPU:
 				begin
 					Flags[0] = (A < B);  // negative flag not set for unsigned operations
+					
 					Flags[3:1] = 3'b000;
+					
 					Flags[4] = (A == B);
+					
 					C = 16'b0000_0000_0000_0000;
 				end
 				

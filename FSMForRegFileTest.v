@@ -12,9 +12,10 @@ module FSMForRegFileTest(
 	
 	reg resetFlag;
 	reg [4:0] flags;
+	wire [4:0] flags_temp;
 	reg [15:0] initVal;		// initial value to load into r0, used to be tempVal
 	reg cin;
-	reg load;		// tells when to load the value into r0
+	//reg load;		// tells when to load the value into r0
 	// codes to enable the specific register
 	reg [15:0] r0_en, r1_en, r2_en, r3_en, r4_en, r5_en, r6_en, r7_en, r8_en, r9_en, r10_en, r11_en, r12_en, r13_en, r14_en, r15_en;
 	reg [15:0] r1add, r2add, r3add, r4add, r5add, r6add, r7add, r8add, r9add, r10add, r11add, r12add, r13add, r14add, r15add;
@@ -30,7 +31,7 @@ module FSMForRegFileTest(
 			initVal = 16'b0000_0000_0000_0001;
 			flags = 5'b00000;
 			cin = 1'b0;             // no carry in initially, but should be set if needed.
-			load = 1'b0;
+//			load = 1'b0;
 			
 			// enable codes
 			r0_en = 16'b0000_0000_0000_0001;
@@ -99,6 +100,7 @@ module FSMForRegFileTest(
 					
 					// checks to see if there is a carry in
 					// This happens every posedge of the clock, so no need to place in every state
+					flags = flags_temp;
 					if (flags[3] == 1)
 						cin = 1;
 
@@ -111,7 +113,7 @@ module FSMForRegFileTest(
 							end
 						1: // Add R0, R1 -> R1
 							begin
-								load = 1'b0;
+//								load = 1'b0;
 								addCode = r1add;
 								enCode = r1_en;
 							end
@@ -199,7 +201,6 @@ module FSMForRegFileTest(
 		// doing this will probably cause the program to load the value each time, but cannot think of another way to do it
 		RegBank reg0( initVal, r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15, r0_en, clk, reset);
 		RegBank reg1( initVal, r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15, r1_en, clk, reset);
-
 		
 		// at the end of the always block, display the value
 		// Do it before the datapath so all values can be displayed
@@ -210,6 +211,6 @@ module FSMForRegFileTest(
 
 		// calling other modules inside an always block doesn't work - which is why the FSM this was based on
 		// had everything OUTside of the always block and used variables for the parameters. 
-		datapath dp(addCode, cin, enCode, clk, reset, flags, rout);
+		datapath dp(addCode, cin, enCode, clk, reset, flags_temp, rout);
 		
 endmodule

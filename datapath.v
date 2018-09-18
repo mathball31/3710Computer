@@ -56,7 +56,7 @@ module RegMux(r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r
 	input [3:0] regNum;
 	output reg [15:0] out;
 	
-	always @(regNum)
+	always @(regNum, r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15)
 	begin
 		case (regNum)
 			0: out = r0;

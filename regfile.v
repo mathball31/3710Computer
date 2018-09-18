@@ -26,6 +26,11 @@ module Register(D_in, wEnable, reset, clk, r
 	 input clk, wEnable, reset;
 	 output reg [15:0] r;
 	 
+	initial
+	begin
+		r = 0;
+	end
+	 
  always @( posedge clk )
 	begin
 	if (reset) r <= 16'b0;

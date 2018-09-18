@@ -21,10 +21,10 @@
 /*
 This module handles the interactions between the ALU and register file.
 */
-module datapath(Opcode, Cin, RegEnable, Clk, Reset, Flags, AluBus);
-	input [15:0] Opcode, RegEnable;
+module datapath(Opcode, Cin, Clk, Reset, Flags, AluBus);
+	input [15:0] Opcode;
 		// Opcode: [15:12], [7:4] = operation code for ALU
-		//				[11:8] = number for input A
+		//				[11:8] = number for input A (dest)
 		//				[3:0] = number for input B
 	
 	input Clk, Cin, Reset;
@@ -35,7 +35,10 @@ module datapath(Opcode, Cin, RegEnable, Clk, Reset, Flags, AluBus);
 	
 	wire [15:0] r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15;
 	wire [15:0] muxAout, muxBout;
-
+	wire [3:0] RegEnable;
+	
+	Mux4to16 regEnable(Opcode[11:8], RegEnable);
+	
 	RegBank regFile(AluBus, r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15, RegEnable, Clk, Reset);
 
 	RegMux muxA(r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15, Opcode[11:8], muxAout);
@@ -44,6 +47,35 @@ module datapath(Opcode, Cin, RegEnable, Clk, Reset, Flags, AluBus);
 	
 	ALU alu(muxAout, muxBout, AluBus, {Opcode[15:12], Opcode[7:4]}, Flags, Cin);
 
+endmodule
+
+module Mux4to16(s, decoder_out);
+
+	input [3:0] s;
+	output [15:0] decoder_out;
+	
+	always @ (s)
+	begin
+		case (s)
+			4'h0 : decoder_out = 16'h0001;
+			4'h1 : decoder_out = 16'h0002;
+			4'h2 : decoder_out = 16'h0004;
+			4'h3 : decoder_out = 16'h0008;
+			4'h4 : decoder_out = 16'h0010;
+			4'h5 : decoder_out = 16'h0020;
+			4'h6 : decoder_out = 16'h0040;
+			4'h7 : decoder_out = 16'h0080;
+			4'h8 : decoder_out = 16'h0100;
+			4'h9 : decoder_out = 16'h0200;
+			4'hA : decoder_out = 16'h0400;
+			4'hB : decoder_out = 16'h0800;
+			4'hC : decoder_out = 16'h1000;
+			4'hD : decoder_out = 16'h2000;
+			4'hE : decoder_out = 16'h4000;
+			4'hF : decoder_out = 16'h8000;
+		endcase
+	end
+	
 endmodule
 
 /*

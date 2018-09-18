@@ -46,7 +46,9 @@ parameter SUB = 4'b1001;
 // 4'b1010
 parameter CMP = 4'b1011;
 parameter CMPU = 4'b1111;
-// 4'b1100, 4'b1101, and 4'b1110
+// 4'b1100
+parameter MOV = 4'b1101;
+//4'b1110
 
 // opcodes 4'b0001-4'b0100 can be used (?)
 
@@ -212,6 +214,12 @@ begin
 					
 					C = 16'b0000_0000_0000_0000;
 				end
+				
+				MOV:
+				begin
+					Flags[4] = (C == 16'b0);
+					Flags[3:0] = 4'b0;
+					C = A;
 				
 				default: 		// used for WAIT and NOP - they're the same thing
 				begin

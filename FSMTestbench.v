@@ -58,7 +58,7 @@ module FSMTestbench;
 		clk = 1;
 		reset = 0;
 		
-		for (i = 0; i <= 15; i = i + 1)
+		for (i = 0; i <= 30; i = i + 1)
 		begin
 			$display("state = %b   rout = %b  ", state, rout);
 			#5;

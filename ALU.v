@@ -53,6 +53,10 @@ parameter CMPU = 4'b1111;
 // opcode hi = 1000
 parameter LSHI = 4'b0000;		// can also be 0001
 parameter LSH = 4'b0100;
+parameter RSH = 4'b1000;
+parameter RSHI = 4'b1001;
+parameter ALSH = 4'b1010;
+parameter ARSH = 4'b1011;
 
 // opcode hi = 1001 = SUBI
 // ONLY assign 1001 to SUBI - the last 4 bits of opcode will be used for the immediate add operation
@@ -63,10 +67,6 @@ parameter LSH = 4'b0100;
 /*
 parameter ADDCUI = 8'b???? immHi;
 parameter CMPUI = 8'b??? immHi;
-parameter RSH = 8'b???
-parameter RSHI = 8'b???? immHi;
-parameter ALSH = 8'b???
-parameter ARSH = 8'b???
 */
 
 /* We will do: ADD, ADDI, ADDU, ADDUI, ADDC, ADDCU, ADDCUI, ADDCI, SUB, SUBI, CMP, CMPI, CMPU/I, AND,
@@ -293,6 +293,7 @@ begin
 			
 					Flags[3:0] = 4'b0000;
 				end
+				
 				LSH:
 				begin
 					// Left shift of A by 1 bit (no sign extension)
@@ -300,6 +301,63 @@ begin
 					Flags[4] = (C == 16'b0000_0000_0000_0000);
 				
 					Flags [3:0] = 4'b0000;
+				end
+				
+				RSH:
+				begin
+					// Right shift of A by 1 bit (no sign extension)
+					C = A >> 1;
+					Flags[4] = (C == 16'b0000_0000_0000_0000);
+
+					Flags [3:0] = 4'b0000;
+				end
+				
+				RSHI:
+				begin
+					// Right shift of A by B bits
+					C = A >> B;
+					Flags[4] = (C == 16'b0000_0000_0000_0000);
+						
+					Flags [3:0] = 4'b0000;
+				end
+				
+				ALSH:
+				begin
+					// Implement left shift of A by 1 bit (with sign extension)
+					if (A[15] == 1'b1)
+						begin
+							C = A << 1;
+							C[15] = 1'b1;
+
+							// This result can't be zero
+							Flags[4] = 1'b0;
+						end
+					else
+						begin
+							C = A << 1;
+							Flags[4] = (C == 16'b0000_0000_0000_0000);
+						end
+						
+					Flags[3:0] = 4'b0000;
+				end
+				
+				ARSH:
+				begin
+					// right shift of A by 1 bit (with sign extension)
+					if (A[15] == 1'b1)
+					begin
+						C = A >> 1;
+						C[15] = 1'b1;
+						// This result can't be zero
+						Flags[4] = 1'b0;
+					end 
+					else
+					begin
+						C = A >> 1;
+						Flags[4] = (C == 16'b0000_0000_0000_0000);
+					end
+					
+					Flags[3:0] = 4'b0000;
 				end
 				
 			default: 		// used for WAIT and NOP - they're the same thing

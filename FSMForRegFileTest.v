@@ -21,7 +21,7 @@ module FSMForRegFileTest(
 	reg [15:0] addCode, enCode;		// the codes to execute
 	
 	// almost like a dummy variable for the outputs of RegBank, not sure if we need them
-//	reg [15:0] r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15;
+	wire [15:0] r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15;
 	
 	
 	// Always initialize values before doing stuff
@@ -103,10 +103,11 @@ module FSMForRegFileTest(
 						cin = 1;
 
 					case(state)
-						0:	// load initial value into register 0
+						0:		// used to be load and enCode = r0_en, but changed to just setting enCode and addCode = 0
 							begin
-								load = 1'b1;
-								enCode = r0_en;
+								enCode = 16'b0000_0000_0000_0000;
+								addCode = 16'b0000_0000_0000_0000;
+								// this is much easier than redoing all the numbers and adding a default case.
 							end
 						1: // Add R0, R1 -> R1
 							begin
@@ -188,21 +189,26 @@ module FSMForRegFileTest(
 					endcase
 				end
 		end
-		
-		// at the end of the always block, display the value
 
 			// load the value into r0 once
 			// TODO this is causing compiler issues and I'm trying to figure it out - Bev
 //			if(load == 1'b1)
 //				RegBank reg0( initVal, r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15, enCode, clk, reset);
-//		RegBank reg0( initVal, r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15, r0_en, clk, reset);
-				
-//		RegBank reg1( initVal, r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15, r1_en, clk, reset);
-		// calling other modules inside an always block doesn't work - which is why the FSM this was based on
-		// had everything OUTside of the always block and used variables for the parameters. 
-		datapath dp(addCode, cin, enCode, clk, reset, flags, rout);
+//		RegBank reg0( initVal, r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15, 16'b0000_0000_0000_0001, clk, reset);
+		
+		// doing this will probably cause the program to load the value each time, but cannot think of another way to do it
+		RegBank reg0( initVal, r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15, r0_en, clk, reset);
+
+		
+		// at the end of the always block, display the value
+		// Do it before the datapath so all values can be displayed
 		hexTo7Seg disp3(.hex_input(rout[15:12]), .seven_seg_out(display[27:21]));
 		hexTo7Seg disp2(.hex_input(rout[11:8]), .seven_seg_out(display[20:14]));
 		hexTo7Seg disp1(.hex_input(rout[7:4]), .seven_seg_out(display[13:7]));
 		hexTo7Seg disp0(.hex_input(rout[3:0]), .seven_seg_out(display[6:0]));
+
+		// calling other modules inside an always block doesn't work - which is why the FSM this was based on
+		// had everything OUTside of the always block and used variables for the parameters. 
+		datapath dp(addCode, cin, enCode, clk, reset, flags, rout);
+		
 endmodule

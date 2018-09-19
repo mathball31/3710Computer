@@ -52,7 +52,7 @@ endmodule
 module Mux4to16(s, decoder_out);
 
 	input [3:0] s;
-	output [15:0] decoder_out;
+	output reg [15:0] decoder_out;
 	
 	always @ (s)
 	begin

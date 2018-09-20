@@ -102,7 +102,6 @@ set_location_assignment PIN_AA14 -to Opcode[0]
 set_location_assignment PIN_AA15 -to Opcode[1]
 set_location_assignment PIN_W15 -to Opcode[2]
 set_location_assignment PIN_Y16 -to Opcode[3]
-set_global_assignment -name VERILOG_FILE FSMTestbench.v
 set_global_assignment -name VERILOG_FILE ALUtest.v
 set_global_assignment -name VERILOG_FILE ALU.v
 set_global_assignment -name VERILOG_FILE regfile.v

@@ -262,7 +262,7 @@ module FSMForRegFileTest(display, state, rout);		// outputs
 					begin
 						opCode = r13_15add;
 					end
-				31: opCode = 16'b0;
+				31: opCode = 16'bx;
 
 				default:
 					opCode = 16'bx;

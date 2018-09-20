@@ -21,7 +21,7 @@
 module ALU( A, B, C, Opcode, Flags, Cin
     );
 input [15:0] A, B;
-input [7:0] Opcode;
+input [15:0] Opcode;
 input Cin;
 output reg [15:0] C;
 /* ZCFNL
@@ -80,10 +80,10 @@ begin
 	C = 16'bx;
 	Flags = 5'bx;
 	// check the first four bits of the opcode
-	case (Opcode[7:4])
+	case (Opcode[15:12])
 		4'b0000:
 		begin
-			case (Opcode[3:0])
+			case (Opcode[7:4])
 				AND:
 				begin
 					C = A & B;
@@ -219,7 +219,7 @@ begin
 				begin
 					Flags[4] = (C == 16'b0);
 					Flags[3:0] = 4'b0;
-					C = A;
+					C = B;
 				end
 				
 				default: 		// used for WAIT and NOP - they're the same thing

@@ -82,7 +82,7 @@ module FSMForRegFileTest(display, state, rout);		// outputs
 		reset = 1;
 		state = 4'b0000;
 		
-		for (i = 0; i <= 30; i = i + 1)
+		for (i = 0; i <= 70; i = i + 1)
 		begin
 			clk = ~clk;
 			$display("state = %b   rout = %b  ", state, rout);
@@ -185,7 +185,6 @@ module FSMForRegFileTest(display, state, rout);		// outputs
 				13: // Move r6 -> r7
 					begin
 						opCode = r6movr7;
-;
 					end
 				14: // r7 = r5 + r7
 					begin
@@ -279,5 +278,6 @@ module FSMForRegFileTest(display, state, rout);		// outputs
 
 		// calling other modules inside an always block doesn't work - which is why the FSM this was based on
 		// had everything OUTside of the always block and used variables for the parameters. 
-		datapath dp(addCode, cin, clk, reset, flags_temp, rout);
+		datapath dp(opCode, cin, clk, reset, flags_temp, rout);
+		
 endmodule

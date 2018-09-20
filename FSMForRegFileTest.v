@@ -1,15 +1,15 @@
 `timescale 1ns / 1ps
 
-module FSMForRegFileTest(display, state, rout);		// outputs
+module FSMForRegFileTest(start, clk, Display);		// outputs
 		
-	output [27:0] display;
-	output [15:0] rout;
-	output reg [4:0] state;
+	input start;
+	output [27:0] Display;
+	wire [15:0] rout;
+	reg [4:0] state;
 	
-	reg resetFlag, clk, reset;
+	input clk;
 	reg [4:0] flags;
 	wire [4:0] flags_temp;		// connects the output of datapath to the register
-	reg [15:0] initVal;			// initial value to load into r0, used to be tempVal
 	reg cin;
 	reg [15:0] opCode;			// the codes to execute
 	integer i;
@@ -59,49 +59,40 @@ module FSMForRegFileTest(display, state, rout);		// outputs
 	initial
 	begin
 		#5;
-		initVal = 16'b0000_0000_0000_0001;
 		flags = 5'b00000;
 		cin = 1'b0;             // no carry in initially, but should be set if needed.
-		clk = 1;
-		reset = 1;
+		//enable for simulation
+		//clk = 1;
 		state = 5'b00000;
 		
+		/* enable for simulation
 		for (i = 0; i <= 70; i = i + 1)
 		begin
 			clk = ~clk;
 			$display("state = %b   rout = %b  ", state, rout);
 			#5;
 		end
+		*/
 	end
 
 	
 	// for each rising positive edge of the clock
-	// check to see if the reset button has been pressed
-	always @(posedge clk)
-	begin
-		if(reset == 1'b1)
-			resetFlag = 1'b1;
-		else	// R = 1'b0
-			resetFlag = 1'b0;
-	end
-	
-
 	always @(posedge clk)
 	begin		
-		if(resetFlag == 1'b1)
+			
+		// check to see if the reset button has been pressed	
+		if(start || start === 1'bx)
 		begin
 			// checks to see if the reset button has been pressed
 			state = 5'b00000;
-			reset = 1'b0;
 		end
 			
 		else
 		begin
-			state = state + 5'b00001;	// increase the state by one
+			if (state < 5'b11111)
+				state = state + 5'b00001;	// increase the state by one
 												// There is no need to add this to every case - it already happens
 												// every time the positive edge rises
-			if(state >= 5'b11111)
-				state = 5'b11111;		// keep it at the last state so can be displayed
 			
 			// checks to see if there is a carry in
 			// This happens every posedge of the clock, so no need to place in every state
@@ -181,13 +172,13 @@ module FSMForRegFileTest(display, state, rout);		// outputs
 		
 		// at the end of the always block, display the value
 		// Do it before the datapath so all values can be displayed
-		hexTo7Seg disp3(.hex_input(rout[15:12]), .seven_seg_out(display[27:21]));
-		hexTo7Seg disp2(.hex_input(rout[11:8]), .seven_seg_out(display[20:14]));
-		hexTo7Seg disp1(.hex_input(rout[7:4]), .seven_seg_out(display[13:7]));
-		hexTo7Seg disp0(.hex_input(rout[3:0]), .seven_seg_out(display[6:0]));
+		hexTo7Seg disp3(rout[15:12], Display[27:21]);
+		hexTo7Seg disp2(.hex_input(rout[11:8]), .seven_seg_out(Display[20:14]));
+		hexTo7Seg disp1(.hex_input(rout[7:4]), .seven_seg_out(Display[13:7]));
+		hexTo7Seg disp0(.hex_input(rout[3:0]), .seven_seg_out(Display[6:0]));
 
 		// calling other modules inside an always block doesn't work - which is why the FSM this was based on
 		// had everything OUTside of the always block and used variables for the parameters. 
-		datapath dp(opCode, cin, clk, reset, flags_temp, rout);
+		datapath dp(opCode, cin, clk, start, flags_temp, rout);
 		
 endmodule

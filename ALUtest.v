@@ -60,6 +60,10 @@ module ALUtest;
 	// opcode hi = 1000
 	parameter LSHI = 4'b0000;		// can also be 0001
 	parameter LSH = 4'b0100;
+	parameter RSH = 4'b1000;
+	parameter RSHI = 4'b1001;
+	parameter ALSH = 4'b1010;
+	parameter ARSH = 4'b1011;
 
 	// opcode hi = 1001 = SUBI
 	// ONLY assign 1001 to SUBI - the last 4 bits of opcode will be used for the immediate add operation
@@ -71,10 +75,6 @@ module ALUtest;
 	parameter ADDCUI = 8'b???? immHi;
 	parameter CMPI = immHi;	1011
 	parameter CMPUI = 8'b??? immHi;
-	parameter RSH = 8'b???
-	parameter RSHI = 8'b???? immHi;
-	parameter ALSH = 8'b???
-	parameter ARSH = 8'b???
 	*/
 
 	/* We will do: ADD, ADDI, ADDU, ADDUI, ADDC, ADDCU, ADDCUI, ADDCI, SUB, SUBI, CMP, CMPI, CMPU/I, AND,
@@ -372,6 +372,7 @@ module ALUtest;
 								expectedFlags = {(C == 16'b0000_0000_0000_0000), 4'b0000};
 								#5 -> checkFlags;
 							end
+							
 							LSH:
 							begin
 								// Left shift of A by 1 bit (no sign extension)
@@ -381,6 +382,70 @@ module ALUtest;
 								expectedFlags = {(C == 16'b0000_0000_0000_0000), 4'b0000};
 								#5 -> checkFlags;
 							end
+							
+							RSHI:
+							begin
+								// Right shift of A by B bits
+								expectedC = A >> Opcode[3:0]; // Why shifting by Opcode[3:0] & not by B? --Michelle
+								#5 -> checkResult;
+								
+								expectedFlags = {(C == 16'b0000_0000_0000_0000), 4'b0000};
+								#5 -> checkFlags;
+							end
+							
+							RSH:
+							begin 
+								// Right shift of A by 1 bit (no sign extension)
+								expectedC = A >> 1;
+								#5 -> checkResult;
+								
+								expectedFlags = {(C == 16'b0000_0000_0000_0000), 4'b0000};
+							end
+							
+							ALSH:
+							begin
+								// Left shift of A by 1 bit (with sign extension)
+								if (A[15] == 1'b1)
+								begin
+									expectedC = A << 1;
+									expectedC[15] = 1'b1; // Isn't sign extension supposed to populate more with 1?? --Michelle
+
+									// This result can't be zero
+									expectedFlags[4] = 1'b0;
+								end
+								else
+								begin
+									expectedC = A << 1;
+									expectedFlags[4] = (C == 16'b0000_0000_0000_0000);
+								end
+								#5 -> checkResult;
+									
+								expectedFlags[3:0] = 4'b0000;
+								#5 -> checkFlags;
+							end
+							
+							ARSH:
+							begin
+								// Right shift of A by 1 bit (with sign extension)
+								if (A[15] == 1'b1)
+								begin
+									expectedC = A >> 1;
+									expectedC[15] = 1'b1;
+									// This result can't be zero
+									expectedFlags[4] = 1'b0;
+								end 
+								
+								else
+								begin
+									expectedC = A >> 1;
+									expectedFlags[4] = (C == 16'b0000_0000_0000_0000);
+								end
+								#5 -> checkResult;
+								
+								expectedFlags[3:0] = 4'b0000;
+								#5 -> checkFlags;
+							end
+							
 					
 						// For shift cases
 						endcase

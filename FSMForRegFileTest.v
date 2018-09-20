@@ -64,7 +64,7 @@ module FSMForRegFileTest(display, state, rout);		// outputs
 		cin = 1'b0;             // no carry in initially, but should be set if needed.
 		clk = 1;
 		reset = 1;
-		state = 4'b0000;
+		state = 5'b00000;
 		
 		for (i = 0; i <= 70; i = i + 1)
 		begin
@@ -172,7 +172,7 @@ module FSMForRegFileTest(display, state, rout);		// outputs
 				30: // r15 = r13 + r15
 					opCode = r13_15add;
 				31: 
-					opCode = 16'bx;
+					opCode = 16'b0000_1111_1101_1111;		// move 15 to 15
 				default:
 					opCode = 16'bx;
 			endcase

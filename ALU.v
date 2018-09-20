@@ -312,21 +312,21 @@ begin
 					Flags [3:0] = 4'b0000;
 				end
 				
-				RSH:
-				begin
-					// Right shift of A by 1 bit (no sign extension)
-					C = A >> 1;
-					Flags[4] = (C == 16'b0000_0000_0000_0000);
-
-					Flags [3:0] = 4'b0000;
-				end
-				
 				RSHI:
 				begin
 					// Right shift of A by B bits
 					C = A >> B;
 					Flags[4] = (C == 16'b0000_0000_0000_0000);
 						
+					Flags [3:0] = 4'b0000;
+				end
+				
+				RSH:
+				begin
+					// Right shift of A by 1 bit (no sign extension)
+					C = A >> 1;
+					Flags[4] = (C == 16'b0000_0000_0000_0000);
+
 					Flags [3:0] = 4'b0000;
 				end
 				

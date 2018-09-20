@@ -9,11 +9,19 @@ module FSMForRegFileTest(display, state, rout);		// outputs
 	reg resetFlag, clk, reset;
 	reg [4:0] flags;
 	wire [4:0] flags_temp;		// connects the output of datapath to the register
-	reg [15:0] initVal;		// initial value to load into r0, used to be tempVal
+	reg [15:0] initVal;			// initial value to load into r0, used to be tempVal
 	reg cin;
-	reg [15:0] opCode, enCode;		// the codes to execute
+	reg [15:0] opCode;			// the codes to execute
 	integer i;
 	
+	
+	// opcodes and registers
+	// This variable encases all of the opcodes and the two registers for adding
+	// from [15:12] and [7:4], those are the opcodes
+	// while [11:8] is for the A input and [3:0] is for the B input
+	// it will make more sense to check this out in the datapath file
+	// All operations are add, so this doesn't change much - just the registers
+
 	// add codes
 	parameter r0_1add = 16'b0000_0001_0101_0000;
 	parameter r0_2add = 16'b0000_0010_0101_0000;			// r0 and r2
@@ -46,31 +54,7 @@ module FSMForRegFileTest(display, state, rout);		// outputs
 	parameter r12movr13 = 16'b0000_1101_1101_1100;
 	parameter r13movr14 = 16'b0000_1110_1101_1101;
 	parameter r14movr15 = 16'b0000_1111_1101_1110;
-	
-	// enable codes
-	// opcodes and registers
-	// This variable encases all of the opcodes and the two registers for adding
-	// from [15:12] and [7:4], those are the opcodes
-	// while [11:8] is for the A input and [3:0] is for the B input
-	// it will make more sense to check this out in the datapath file
-	// All operations are add, so this doesn't change much - just the registers
-//	parameter r0_en = 16'b0000_0000_0000_0001;
-//	parameter r1_en = 16'b0000_0000_0000_0010;
-//	parameter r2_en = 16'b0000_0000_0000_0100;
-//	parameter r3_en = 16'b0000_0000_0000_1000;
-//	parameter r4_en = 16'b0000_0000_0001_0000;
-//	parameter r5_en = 16'b0000_0000_0010_0000;
-//	parameter r6_en = 16'b0000_0000_0100_0000;
-//	parameter r7_en = 16'b0000_0000_1000_0000;
-//	parameter r8_en = 16'b0000_0001_0000_0000;
-//	parameter r9_en = 16'b0000_0010_0000_0000;
-//	parameter r10_en = 16'b0000_0100_0000_0000;
-//	parameter r11_en = 16'b0000_1000_0000_0000;
-//	parameter r12_en = 16'b0001_0000_0000_0000;
-//	parameter r13_en = 16'b0010_0000_0000_0000;
-//	parameter r14_en = 16'b0100_0000_0000_0000;
-//	parameter r15_en = 16'b1000_0000_0000_0000;
-		
+			
 	// Always initialize values before doing stuff
 	initial
 	begin
@@ -126,144 +110,69 @@ module FSMForRegFileTest(display, state, rout);		// outputs
 
 			case(state)
 				0:		// Add immediate (1) into r0
-					begin
-						opCode = 16'b0101_0000_0000_0001;  // 0101 - add immediate 0000 - register 0 - value 1
-					end
+					opCode = 16'b0101_0000_0000_0001;  // 0101 - add immediate 0000 - register 0 - value 1
 				1: // Add immediate (1) into r1
-					begin
-						opCode = 16'b0101_0001_0000_0001;  // add immediate value of 1 into register 
-					end
+					opCode = 16'b0101_0001_0000_0001;  // add immediate value of 1 into register 
 				2: // r1 = r0 + r1
-					begin
-						opCode = r0_1add;
-					end
+					opCode = r0_1add;
 				3: // Move r1 -> r2
-					begin
-						opCode = r1movr2;
-					end
+					opCode = r1movr2;
 				4: // r2 = r0 + r2
-					begin
-						opCode = r0_2add;
-					end
+					opCode = r0_2add;
 				5: // Move r2 -> r3
-					begin
-						opCode = r2movr3;
-					end
+					opCode = r2movr3;
 				6: // r3 = r1 + r3
-					begin
-						opCode = r1_3add;
-					end
+					opCode = r1_3add;
 				7: // Move r3 -> r4
-					begin
-						opCode = r3movr4;
-					end
+					opCode = r3movr4;
 				8: // r4 = r4 + r2
-					begin
-						opCode = r2_4add;
-
-					end
+					opCode = r2_4add;
 				9: // Move r4 -> 45
-					begin
-						opCode = r4movr5;
-
-					end
+					opCode = r4movr5;
 				10: // r5 = r3 + r5
-					begin
-						opCode = r3_5add;
-
-					end
+					opCode = r3_5add;
 				11: // Move r5 -> r6
-					begin
-						opCode = r5movr6;
-
-					end
+					opCode = r5movr6;
 				12: // r6 = r6 + r4
-					begin
-						opCode = r4_6add;
-
-					end
+					opCode = r4_6add;
 				13: // Move r6 -> r7
-					begin
-						opCode = r6movr7;
-					end
+					opCode = r6movr7;
 				14: // r7 = r5 + r7
-					begin
-						opCode = r5_7add;
-
-					end
+					opCode = r5_7add;
 				15: // Move r7 -> r8
-					begin
-						opCode = r7movr8;
-					end
+					opCode = r7movr8;
 				16: // r8 = r6 + r8
-					begin
-						opCode = r6_8add;
-
-					end
+					opCode = r6_8add;
 				17: // Move r8 -> r9
-					begin
-						opCode = r8movr9;
-					end
+					opCode = r8movr9;
 				18: // r9 = r7 + r9
-					begin
-						opCode = r7_9add;
-
-					end
+					opCode = r7_9add;
 				19: // Move r9 -> r10
-					begin
-						opCode = r9movr10;
-					end
+					opCode = r9movr10;
 				20: // r10 = r8 + r10
-					begin
-						opCode = r8_10add;
-
-					end
+					opCode = r8_10add;
 				21: // Move r10 -> r11
-					begin
-						opCode = r10movr11;
-					end
+					opCode = r10movr11;
 				22: // r11 = r9 + r11
-					begin
-						opCode = r9_11add;
-
-					end
+					opCode = r9_11add;
 				23: // Move r11 -> r12
-					begin
-						opCode = r11movr12;
-					end
+					opCode = r11movr12;
 				24: // r12 = r10 + r12
-					begin
-						opCode = r10_12add;
-
-					end
+					opCode = r10_12add;
 				25: // Move r12 -> r13
-					begin
-						opCode = r12movr13;
-					end
+					opCode = r12movr13;
 				26: // r13 = r11 + r13
-					begin
-						opCode = r11_13add;
-
-					end
+					opCode = r11_13add;
 				27: // Move r13 -> r14
-					begin
-						opCode = r13movr14;
-					end
+					opCode = r13movr14;
 				28: // r14 = r12 + r14
-					begin
-						opCode = r12_14add;
-
-					end
+					opCode = r12_14add;
 				29: // Move r14 -> r15
-					begin
-						opCode = r14movr15;
-					end
+					opCode = r14movr15;
 				30: // r15 = r13 + r15
-					begin
-						opCode = r13_15add;
-					end
-				31: opCode = 16'bx;
-
+					opCode = r13_15add;
+				31: 
+					opCode = 16'bx;
 				default:
 					opCode = 16'bx;
 			endcase

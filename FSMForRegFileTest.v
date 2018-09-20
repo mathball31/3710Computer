@@ -74,7 +74,7 @@ module FSMForRegFileTest(display, state, rout);		// outputs
 	// Always initialize values before doing stuff
 	initial
 	begin
-		#100;
+		#5;
 		initVal = 16'b0000_0000_0000_0001;
 		flags = 5'b00000;
 		cin = 1'b0;             // no carry in initially, but should be set if needed.
@@ -116,8 +116,8 @@ module FSMForRegFileTest(display, state, rout);		// outputs
 			state = state + 5'b00001;	// increase the state by one
 												// There is no need to add this to every case - it already happens
 												// every time the positive edge rises
-			if(state >= 5'b11110)
-				state = 5'b11110;		// keep it at the last state so can be displayed
+			if(state >= 5'b11111)
+				state = 5'b11111;		// keep it at the last state so can be displayed
 			
 			// checks to see if there is a carry in
 			// This happens every posedge of the clock, so no need to place in every state
@@ -261,8 +261,9 @@ module FSMForRegFileTest(display, state, rout);		// outputs
 				30: // r15 = r13 + r15
 					begin
 						opCode = r13_15add;
-
 					end
+				31: opCode = 16'b0;
+
 				default:
 					opCode = 16'bx;
 			endcase

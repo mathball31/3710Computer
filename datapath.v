@@ -35,7 +35,7 @@ module datapath(Opcode, Cin, Clk, Reset, Flags, AluBus);
 	
 	wire [15:0] r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15;
 	wire [15:0] muxAout, muxBout;
-	wire [3:0] RegEnable;
+	wire [15:0] RegEnable;		// output of the Mux4to16 module, to be put into RegBank
 	
 	Mux4to16 regEnable(Opcode[11:8], RegEnable);
 	

@@ -2,8 +2,8 @@
 // Simple Dual Port RAM with separate read/write addresses and
 // single read/write clock
 
-module simple_dual_port_ram_single_clock
-#(parameter DATA_WIDTH=8, parameter ADDR_WIDTH=6)
+module mem
+#(parameter DATA_WIDTH = 16, parameter ADDR_WIDTH = 10)
 (
 	input [(DATA_WIDTH-1):0] data,
 	input [(ADDR_WIDTH-1):0] read_addr, write_addr,

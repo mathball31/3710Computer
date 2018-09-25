@@ -1,0 +1,9 @@
+Game Plan
+
+Snake
+	The more you eat, the longer you get
+		Faster (?) Maybe
+	COLOR
+		White feed - color of feed = color of snake (?)
+		Gray background
+		Two players - red and green (or other color)

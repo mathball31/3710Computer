@@ -16,7 +16,7 @@ module mem
 
 	always @ (posedge clk)
 	begin
-		// Write
+		// Write - if we (write enable) = 1, then you wanna write data
 		if (we)
 			ram[write_addr] <= data;
 
@@ -24,6 +24,9 @@ module mem
 		// NEW data, use = (blocking write) rather than <= (non-blocking write)
 		// in the write assignment.	 NOTE: NEW data may require extra bypass
 		// logic around the RAM.
+		
+		// two ways of reading RAM
+		// best way is to read from a txt file, where it has preset instructions to read into memory
 		q <= ram[read_addr];
 	end
 

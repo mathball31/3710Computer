@@ -7,3 +7,10 @@ Snake
 		White feed - color of feed = color of snake (?)
 		Gray background
 		Two players - red and green (or other color)
+		
+
+Connect Four
+
+
+
+Pong

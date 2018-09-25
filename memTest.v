@@ -28,13 +28,13 @@ module memTest;
 	reg [(DATA_WIDTH-1):0] data;
 	reg [(ADDR_WIDTH-1):0] read_addr, write_addr;
 	reg we, clk;
-	reg [(DATA_WIDTH-1):0] out;
+	wire [(DATA_WIDTH-1):0] out;
 	
 	// Instantiate the Unit Under Test (UUT)
-	mem uut #(
+	mem #(
 		.DATA_WIDTH(DATA_WIDTH),
 		.ADDR_WIDTH(ADDR_WIDTH)
-		)(
+		) uut (
 		.data(data), 
 		.read_addr(read_addr), 
 		.write_addr(write_addr), 

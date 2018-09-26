@@ -1,0 +1,6 @@
+// commandList.txt
+// Comments are allowed - yay!
+// This is where our list of commands can be found, such as what to do when a
+// certain motion is recorded, or the CPU inputs a certain instruction.
+
+// For now, empty

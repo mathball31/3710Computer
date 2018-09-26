@@ -7,10 +7,16 @@ Snake
 		White feed - color of feed = color of snake (?)
 		Gray background
 		Two players - red and green (or other color)
+	Eat your color of food to increase score/length
+		Game over when you collide into an object/yourself/the opponent
+		Whoever is the longest wins
 		
-
-Connect Four
-
-
-
-Pong
+	Peripherals
+		A controller for movement (D-pad or keyboard)
+			Basic movements - up, down, left, and right
+		VGA display for visuals
+			Background
+			Snakes
+			Obstacles
+			Scoreboard that is also the length of the snake
+			Time elapsed (?)

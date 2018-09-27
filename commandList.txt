@@ -4,3 +4,4 @@
 // certain motion is recorded, or the CPU inputs a certain instruction.
 
 // For now, empty
+// First address is 512

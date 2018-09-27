@@ -13,7 +13,7 @@ module mem
 
 	// Declare the RAM variable
 	// recall that ** means raise to the power of
-	// 16 bit word and 512 addr_width (2^10), which equals one block
+	// 16 bit word and 512 addr_width (2^10), which equals two blocks
 	reg [DATA_WIDTH-1:0] ram[2**ADDR_WIDTH-1:0];
 	
 	// initializing memory

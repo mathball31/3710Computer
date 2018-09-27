@@ -5,3 +5,9 @@
 
 // For now, empty
 // First address is 512
+
+0000000011001100		// 16'h00CC (204) placed into first address
+0000000010101010		// 16'h00AA	(170) placed into second address
+@0002						// go to address 2
+0000000001010110		// 16'h0056 (86) placed into address 2?
+0000000101110100		// 16'h0174 (372) placed into address 1?

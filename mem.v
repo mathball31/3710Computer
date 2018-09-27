@@ -30,10 +30,10 @@ module mem
 			ram[write_addr] <= data;		// write the data into the ram at a specific address
 
 		// Read (if read_addr == write_addr, return OLD data).
-		// To return NEW data, use = (blocking write) rather than <= (non-blocking write)
-		// in the write assignment.
+		// To return NEW data, use = (blocking write) rather than <= (non-blocking write).
 		// NOTE: NEW data may require extra bypass logic around the RAM.
 		q <= ram[read_addr];
+		
 	end
 
 endmodule

@@ -14,7 +14,7 @@ module mem
 	// Declare the RAM variable
 	// recall that ** means raise to the power of
 	// 16 bit word and 512 addr_width (2^10), which equals two blocks
-	reg [DATA_WIDTH-1:0] ram[2**ADDR_WIDTH-1:0];
+	reg [DATA_WIDTH-1:0] ram[0:2**ADDR_WIDTH-1];
 	
 	// initializing memory
 	initial begin
@@ -26,10 +26,11 @@ module mem
 	// Read (if read_addr == write_addr, return OLD data).
 	// To return NEW data, use = (blocking write) rather than <= (non-blocking write).
 	// NOTE: NEW data may require extra bypass logic around the RAM.
+	
 	// Port A 
 	always @ (posedge clk)
 	begin
-		if (we_a) 
+		if (we_a || ((we_a && we_b) && (addr_a == addr_b))) 
 		begin
 			ram[addr_a] <= data_a;
 			q_a <= data_a;

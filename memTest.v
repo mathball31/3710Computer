@@ -17,7 +17,7 @@
 // Dependencies:
 // 
 // Revision:
-// Revision 0.01 - File Created
+// Revision 0.01 - File Created`
 // Additional Comments:
 // 
 ////////////////////////////////////////////////////////////////////////////////
@@ -25,35 +25,45 @@
 module memTest;
 	parameter DATA_WIDTH = 16;
 	parameter ADDR_WIDTH = 10;
-	reg [(DATA_WIDTH-1):0] data;
-	reg [(ADDR_WIDTH-1):0] read_addr, write_addr;
-	reg we, clk;
+	reg [(DATA_WIDTH-1):0] data_a, data_b;
+	reg [(ADDR_WIDTH-1):0] addr_a, addr_b;
+	reg we_a, we_b, clk;
+	wire [(DATA_WIDTH-1):0] out_a, out_b;
+	
 	reg [3:0] state;
-	wire [(DATA_WIDTH-1):0] out;
-	reg [(DATA_WIDTH-1):0] expected_out;
+	reg [(DATA_WIDTH-1):0] expected_out_a, expected_out_b;
 	
 	event terminate_sim;
-	event checkResult;
+	event checkResult_a;
+	event checkResult_b;
 	reg error;
 	
 	// Instantiate the Unit Under Test (UUT)
 	mem uut (
-		.data(data), 
-		.read_addr(read_addr), 
-		.write_addr(write_addr), 
-		.we(we), 
-		.clk(clk),
-		.q(out)
+		data_a, data_b, addr_a, addr_b, we_a, we_b, clk, out_a, out_b
 	);
 	
 	//check results
-	always @(checkResult) 
+	always @(checkResult_a) 
 	begin
-		if (out !== expected_out)
+		if (out_a !== expected_out_a)
 		begin
 			$display ("ERROR at time: %d, state: %d", $time, state);
-			$display ("read_addr: %h, %b; write_addr: %h, %b", read_addr, read_addr, write_addr, write_addr);
-			$display ("Expected value: %d, %b; Actual Value: %d, %b, data: %d, %b", expected_out, expected_out, out, out, data, data);
+			$display ("addr_a: 0x%h, 0b%b", addr_a, addr_a);
+			$display ("Expected value a: %d, %b; Actual Value a: %d, %b, data_a: %d, %b", expected_out_a, expected_out_a, out_a, out_a, data_a, data_a);
+			error = 1;
+			#5 -> terminate_sim;
+		end
+	end
+	
+	//check results
+	always @(checkResult_b) 
+	begin
+		if (out_b !== expected_out_b)
+		begin
+			$display ("ERROR at time: %d, state: %d", $time, state);
+			$display ("addr_b: 0x%h, 0b%b", addr_b, addr_b);
+			$display ("Expected value b: %d, %b; Actual Value b: %d, %b, data_b: %d, %b", expected_out_b, expected_out_b, out_b, out_b, data_b, data_b);
 			error = 1;
 			#5 -> terminate_sim;
 		end
@@ -77,54 +87,83 @@ module memTest;
 
 	initial
 	begin
-		#5;
-		data = 0;
-		read_addr = 0;
-		write_addr = 0;
-		we = 0;
-		clk = 1;
+		clk =1 ;
+		data_a = 0;
+		data_b = 0;
+		addr_a = 0;
+		addr_b = 0;
+		we_a = 0;
+		we_b = 0;
 		state = 0;
 		
-		for (i = 0; i <= 70; i = i + 1)
-		begin
-			clk = ~clk;
-			$display("state = %b   out = %b  ", state, out);
-			#5;
-		end
-	end
+		#20
+		
+		#100
+		$finish;
 	
+	end
+
+always @(*)
+begin
+#5 clk <= ~clk;
+end
 	
 	always @(posedge clk)
 	begin
 		
 		case (state)
+			/*
 			0:
 			begin
 				we = 1;
 				data = 16'b1;
-				write_addr = 10'b0;
+				addr = 10'b0;
 			end
 			1:
 			begin
 				we = 0;
-				read_addr = 10'b0;
+				addr = 10'b0;
 			end
 			2:
 			begin
 				expected_out =  16'b1;
 				#5-> checkResult;
 			end
+			*/
+			1:
+			begin
+				we_a = 1;
+				we_b = 1;
+				addr_a = 10'h000;
+				addr_b = 10'h001;
+				data_a = 16'hdead;
+				data_b = 16'hbeaf;
+			end
+			2:
+			begin
+				we_a = 0;
+				we_b = 0;
+				addr_a = 10'h000;
+				addr_b = 10'h001;
+				expected_out_a = 16'hdead;
+				expected_out_b = 16'hbeaf;
+				#5 -> checkResult_a;
+				#5 -> checkResult_b;
+			end
 			3:
 			begin
+				we_a = 1;
+				we_b = 1;
+				addr_a = 10'h002;
+				addr_b = 10'h002;
+				data_a = 16'hdead;
+				data_b = 16'hbeaf;
 			
 			end
 			4:
 			begin
-			
-			end
-			5:
-			begin
-			
+				we_a = 0;
+				we_b = 0;
 			end
 		endcase
 		

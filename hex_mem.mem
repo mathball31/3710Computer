@@ -2,10 +2,8 @@
 // Comments are allowed - yay!
 // This is where our list of commands can be found, such as what to do when a
 // certain motion is recorded, or the CPU inputs a certain instruction.
-
 // For now, empty
 // First address is 512
-
 dead
 beaf
 00cc		// 16'h00CC (204) placed into third address

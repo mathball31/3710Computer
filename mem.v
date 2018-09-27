@@ -11,6 +11,7 @@ module mem
 	output reg [(DATA_WIDTH-1):0] q_a, q_b
 );
 
+	integer i;
 	// Declare the RAM variable
 	// recall that ** means raise to the power of
 	// 16 bit word and 512 addr_width (2^10), which equals two blocks
@@ -20,13 +21,15 @@ module mem
 	initial begin
 		// use $readmemb if want to read in binarary
 		// right now, reading in hex
-		$readmemh("commandList.txt", ram);
+		//$readmemh("hex_mem.mem", ram);
+		for(i=0;i<2**ADDR_WIDTH;i=i+1)
+			ram[i] = 0;
 	end
 
 	// Read (if read_addr == write_addr, return OLD data).
 	// To return NEW data, use = (blocking write) rather than <= (non-blocking write).
 	// NOTE: NEW data may require extra bypass logic around the RAM.
-	
+	//combine these always blocks into one. -- Dirk/ vikas
 	// Port A 
 	always @ (posedge clk)
 	begin

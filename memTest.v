@@ -51,7 +51,7 @@ module memTest;
 	begin
 		if (out !== expected_out)
 		begin
-			$display ("ERROR at time: %d", $time);
+			$display ("ERROR at time: %d, state: %d", $time, state);
 			$display ("read_addr: %h, %b; write_addr: %h, %b", read_addr, read_addr, write_addr, write_addr);
 			$display ("Expected value: %d, %b; Actual Value: %d, %b, data: %d, %b", expected_out, expected_out, out, out, data, data);
 			error = 1;
@@ -81,8 +81,8 @@ module memTest;
 		data = 0;
 		read_addr = 0;
 		write_addr = 0;
-		we = 1;
-		clk = 0;
+		we = 0;
+		clk = 1;
 		state = 0;
 		
 		for (i = 0; i <= 70; i = i + 1)
@@ -96,22 +96,23 @@ module memTest;
 	
 	always @(posedge clk)
 	begin
-		state = state + 4'b0001;
 		
 		case (state)
 			0:
 			begin
-				data = 16'b0;
-				read_addr = 10'b0;
+				we = 1;
+				data = 16'b1;
 				write_addr = 10'b0;
 			end
 			1:
 			begin
-			
+				we = 0;
+				read_addr = 10'b0;
 			end
 			2:
 			begin
-			
+				expected_out =  16'b1;
+				#5-> checkResult;
 			end
 			3:
 			begin
@@ -126,6 +127,8 @@ module memTest;
 			
 			end
 		endcase
+		
+		state = state + 4'b0001;
 	end
 	
       

@@ -29,19 +29,18 @@ module mem
 	// Read (if read_addr == write_addr, return OLD data).
 	// To return NEW data, use = (blocking write) rather than <= (non-blocking write).
 	// NOTE: NEW data may require extra bypass logic around the RAM.
-
-	// if we_a = 1
-	// check if we_b = 1
-	// then check if addr_a == addr_b
-	// if so, write to a
-	// otherwise, both can be written to the addresses they have
-	// also add for conditions when the we != 1
-
-
-	// Port A 
-	always @ (posedge clk)
+	always @(posedge clk)
 	begin
-		if (we_a || ((we_a && we_b) && (addr_a == addr_b))) 
+		if((we_a && we_b) && (addr_a == addr_b))
+		begin
+			// if both enables are on AND the addresses are the same
+			// give precedence to port A
+			ram[addr_a] <= data_a;
+		end
+
+		// otherwise, check for the other conditions
+		// Port A
+		if (we_a) 
 		begin
 			ram[addr_a] <= data_a;
 			q_a <= data_a;
@@ -49,12 +48,9 @@ module mem
 		else 
 		begin
 			q_a <= ram[addr_a];
-		end 
-	end 
-
-	// Port B 
-	always @ (posedge clk)
-	begin
+		end
+		
+		// Port B
 		if (we_b) 
 		begin
 			ram[addr_b] <= data_b;
@@ -65,5 +61,34 @@ module mem
 			q_b <= ram[addr_b];
 		end 
 	end
+
+
+//	// Port A 
+//	always @ (posedge clk)
+//	begin
+//		if (we_a || ((we_a && we_b) && (addr_a == addr_b))) 
+//		begin
+//			ram[addr_a] <= data_a;
+//			q_a <= data_a;
+//		end
+//		else 
+//		begin
+//			q_a <= ram[addr_a];
+//		end 
+//	end 
+//
+//	// Port B 
+//	always @ (posedge clk)
+//	begin
+//		if (we_b) 
+//		begin
+//			ram[addr_b] <= data_b;
+//			q_b <= data_b;
+//		end
+//		else 
+//		begin
+//			q_b <= ram[addr_b];
+//		end 
+//	end
 
 endmodule

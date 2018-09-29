@@ -29,7 +29,15 @@ module mem
 	// Read (if read_addr == write_addr, return OLD data).
 	// To return NEW data, use = (blocking write) rather than <= (non-blocking write).
 	// NOTE: NEW data may require extra bypass logic around the RAM.
-	//combine these always blocks into one. -- Dirk/ vikas
+
+	// if we_a = 1
+	// check if we_b = 1
+	// then check if addr_a == addr_b
+	// if so, write to a
+	// otherwise, both can be written to the addresses they have
+	// also add for conditions when the we != 1
+
+
 	// Port A 
 	always @ (posedge clk)
 	begin

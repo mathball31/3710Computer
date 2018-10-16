@@ -21,9 +21,9 @@ module mem
 	initial begin
 		// use $readmemb if want to read in binarary
 		// right now, reading in hex
-		//$readmemh("hex_mem.mem", ram);
-		for(i=0;i<2**ADDR_WIDTH;i=i+1)
-			ram[i] = 0;
+		$readmemh("hex_mem.mem", ram);
+//		for(i=0;i<2**ADDR_WIDTH;i=i+1)
+//			ram[i] = 0;
 	end
 
 	// Read (if read_addr == write_addr, return OLD data).
@@ -31,35 +31,42 @@ module mem
 	// NOTE: NEW data may require extra bypass logic around the RAM.
 	always @(posedge clk)
 	begin
-		if((we_a && we_b) && (addr_a == addr_b))
+		if(we_a && we_b)
 		begin
-			// if both enables are on AND the addresses are the same
-			// give precedence to port A
-			ram[addr_a] <= data_a;
-		end
+			if(addr_a == addr_b)
+			begin
+				// if both enables are on AND the addresses are the same
+				// give precedence to port A
+				ram[addr_a] <= data_a;
+			end
+			else
+			begin
+				// both enables are on, but the addresses are NOT the same
+				ram[addr_a] <= data_a;
+				q_a <= data_a;
 
-		// otherwise, check for the other conditions
-		// Port A
-		if (we_a) 
+				ram[addr_b] <= data_b;
+				q_b <= data_b;
+			end
+		end
+		else if(we_a)
 		begin
 			ram[addr_a] <= data_a;
 			q_a <= data_a;
+			q_b <= ram[addr_b];
 		end
-		else 
+		else if(we_b)
 		begin
 			q_a <= ram[addr_a];
-		end
-		
-		// Port B
-		if (we_b) 
-		begin
 			ram[addr_b] <= data_b;
 			q_b <= data_b;
 		end
-		else 
+		else
 		begin
+			// the enables aren't on, so just read
+			q_a <= ram[addr_a];
 			q_b <= ram[addr_b];
-		end 
+		end
 	end
 
 
@@ -90,5 +97,4 @@ module mem
 //			q_b <= ram[addr_b];
 //		end 
 //	end
-
 endmodule

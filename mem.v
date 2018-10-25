@@ -16,7 +16,9 @@ module mem
 	initial
 	begin
 		// TODO This file path needs to change for your personal laptop 
-		$readmemh("C:/Users/Michelle/Documents/GitHub/3710Computer/hex_mem.mem", ram);
+		//$readmemh("C:/Users/Michelle/Documents/GitHub/3710Computer/hex_mem.mem", ram);
+		$readmemh("C:/Users/dirkl/Documents/3710Computer/hex_mem.mem", ram);
+
 	end
 
 	// Port A 
@@ -40,7 +42,7 @@ module mem
 		begin
 			q_b <= data_a; // TODO is this rite
 		end
-		if (we_b) 
+		if (we_b && !(we_a && (addr_a == addr_b))) 
 		begin
 			ram[addr_b] <= data_b;
 			q_b <= data_b;

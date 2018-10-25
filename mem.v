@@ -38,11 +38,7 @@ module mem
 	// Port B 
 	always @ (posedge clk)
 	begin
-		if (we_a && we_b && (addr_a == addr_b))
-		begin
-			q_b <= data_a; // TODO is this rite
-		end
-		if (we_b && !(we_a && (addr_a == addr_b))) 
+		if(we_b)
 		begin
 			ram[addr_b] <= data_b;
 			q_b <= data_b;

@@ -46,9 +46,40 @@ module datapath(Opcode, Cin, Clk, Reset, Flags, AluBus);
 	RegMux muxB(r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15, Opcode[3:0], muxBout);
 	
 	ALU alu(muxAout, muxBout, AluBus, Opcode, Flags, Cin);
+	
+	//programCounter(Clk, Reset, 
 
 endmodule
-
+/*
+module programCounter(Clk, Reset, pc_en, pc_ld, pc_in, pc_out);
+	input Clk, Reset, pc_en, pc_ld;
+	input [9:0] pc_in;
+	output reg [9:0] pc_out;
+	
+	always @ (posedge Clk)
+	begin
+		if (pc_en)
+		begin
+			if (pc_ld)
+			begin
+				pc_out = pc_in;
+			end
+			else
+			begin
+				pc_out = pc_out + 1;
+			end
+		end
+		else
+		begin
+			pc_out = pc_out;
+		end
+		else if (Reset) 
+		begin
+			pc_out = 0;
+		end
+	end
+endmodule
+*/
 module Mux4to16(s, decoder_out);
 
 	input [3:0] s;

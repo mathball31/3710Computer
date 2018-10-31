@@ -1,7 +1,7 @@
 // Quartus Prime Verilog Template
 // True Dual Port RAM with single clock
 
-module mem
+module Memory
 #(parameter DATA_WIDTH=16, parameter ADDR_WIDTH=10)
 (
 	input [(DATA_WIDTH-1):0] data_a, data_b,

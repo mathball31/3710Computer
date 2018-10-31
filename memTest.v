@@ -39,7 +39,7 @@ module memTest;
 	reg error;
 	
 	// Instantiate the Unit Under Test (UUT)
-	mem uut (
+	Memory uut (
 		data_a, data_b, addr_a, addr_b, we_a, we_b, clk, out_a, out_b
 	);
 	

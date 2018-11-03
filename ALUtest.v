@@ -91,11 +91,11 @@ module ALUtest;
 	// Instantiate the Unit Under Test (UUT)
 	ALU uut (
 		.A(A), 
-		.B(B), 
-		.C(C), 
+		.B(B),		
 		.Opcode(Opcode), 
 		.Flags(Flags),
-		.Cin(Cin)
+		.Cin(Cin),
+		.C(C)
 	);
 
 	//check results

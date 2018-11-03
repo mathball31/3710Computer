@@ -1,3 +1,5 @@
+
+
 module FSM(data, opcode, mux_A_sel, mux_B_sel, pc_sel, imm_sel, mem_w_en_a, mem_w_en_b, reg_en, flag_en, pc_en);
 
 	input [15:0] data;
@@ -15,11 +17,21 @@ module FSM(data, opcode, mux_A_sel, mux_B_sel, pc_sel, imm_sel, mem_w_en_a, mem_
 //
 //	RegMux muxB(r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15, Opcode[3:0], muxBout);
 //
-//	ALU alu(muxAout, muxBout, AluBus, Opcode, Flags, Cin);
+//	ALU alu(muxAout, muxBout, Opcode, Flags, Cin, ALUbus);
 //	
 //	Memory mem(data_a, data_b, addr_a, addr_b, we_a, we_b, clk, mem_out_a, mem_out_b);
 //	
 //	ProgramCounter pc(clk, reset, pc_en, pc_ld, pc_in, pc_out);
+
+	initial
+	begin
+		pc_sel = 1'b1; // TODO modify depending on state
+		imm_sel = 1'b0; // TODO modify depending on state
+		mem_w_en_a = 1'b0; // TODO modify depending on state
+		mem_w_en_b = 1'b0; // TODO modify depending on state
+		flag_en = 1'b1; // TODO modify depending on state
+		pc_en = 1'b1; // TODO modify depending on state
+	end
 	
 	// For reg to reg, data from memory is the opcode.
 	always @ *
@@ -27,14 +39,11 @@ module FSM(data, opcode, mux_A_sel, mux_B_sel, pc_sel, imm_sel, mem_w_en_a, mem_
 		opcode = data;
 		mux_A_sel = opcode[11:8];
 		mux_B_sel = opcode[3:0];
-		pc_sel = 1'b1; // TODO modify depending on state
-		imm_sel = 1'b0; // TODO modify depending on state
-		mem_w_en_a = 1'b0; // TODO modify depending on state
-		mem_w_en_b = 1'b0; // TODO modify depending on state
-		flag_en = 1'b1; // TODO modify depending on state
-		pc_en = 1'b1; // TODO modify depending on state
+		
 		reg_en = mux_out;
 	end
+	
+
 	
 	
 	Mux4to16 regEnable(opcode[11:8], mux_out);

@@ -39,14 +39,6 @@ module Datapath(Cin, clk, reset, flags, alu_bus);
 	
 	// Mux4to16 regEnable(opcode[11:8], reg_en);
 	
-	RegBank regFile(alu_bus, r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15, reg_en, clk, reset);
-
-	RegMux muxA(r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15, mux_A_sel, mux_A_out);
-
-	RegMux muxB(r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15, mux_B_sel, mux_B_out);
-	
-	ALU alu(mux_A_out, mux_B_out, alu_bus, opcode, flags, Cin);
-	
 	// new stuuuff
 	
 	wire pc_en, w_en_a, w_en_b, pc_sel, imm_sel;  // Output from FSM
@@ -58,6 +50,16 @@ module Datapath(Cin, clk, reset, flags, alu_bus);
 	wire [9:0] pc_mux_out = pc_sel ? pc_out : mux_A_out[9:0]; 
 	wire [15:0] mem_out_a, mem_out_b;
 	wire flag_en;
+	
+	RegBank regFile(alu_bus, r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15, reg_en, clk, reset);
+
+	RegMux muxA(r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15, mux_A_sel, mux_A_out);
+
+	RegMux muxB(r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15, mux_B_sel, mux_B_out);
+	
+	ALU alu(mux_A_out, mux_B_out, opcode, flags, Cin, alu_bus);
+	
+	
 	
 	/*
 	always @(pc_mux) 
@@ -123,6 +125,11 @@ module ProgramCounter(clk, reset, pc_en, pc_ld, pc_in, pc_out);
 	input [9:0] pc_in;
 	output reg [9:0] pc_out;
 	
+	/*initial
+	begin
+		pc_out = 10'b0;
+	end */
+	
 	always @ (posedge clk)
 	begin
 		if (pc_en)
@@ -136,7 +143,7 @@ module ProgramCounter(clk, reset, pc_en, pc_ld, pc_in, pc_out);
 				pc_out = pc_out + 1'b1;
 			end
 		end
-		else if (reset) 
+		if (reset) 
 		begin
 			pc_out = 0;
 		end

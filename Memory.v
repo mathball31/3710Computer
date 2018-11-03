@@ -18,7 +18,8 @@ module Memory
 		// TODO This file path needs to change for your personal laptop 
 		//$readmemh("C:/Users/Michelle/Documents/GitHub/3710Computer/hex_mem.mem", ram);
 		//$readmemh("C:/Users/dirkl/Documents/3710Computer/hex_mem.mem", ram);
-		$readmemh("C:/Users/sator/Documents/3710Project/3710Computer/hex_mem.mem", ram);
+		//$readmemh("C:/Users/sator/Documents/3710Project/3710Computer/hex_mem.mem", ram);
+		$readmemh("C:/Users/Michelle/Documents/GitHub/3710Computer/TestProgram1.txt", ram);
 	end
 
 	// Port A 

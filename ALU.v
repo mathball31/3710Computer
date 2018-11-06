@@ -18,7 +18,7 @@
 // Additional Comments: 
 //
 //////////////////////////////////////////////////////////////////////////////////
-module ALU( A, B, C, Opcode, Flags, Cin
+module ALU( A, B, Opcode, Flags, Cin, C
     );
 input [15:0] A, B;
 input [15:0] Opcode;
@@ -217,7 +217,7 @@ begin
 				
 				MOV:
 				begin
-					Flags[4] = (C == 16'b0);
+					Flags[4] = (B == 16'b0);
 					Flags[3:0] = 4'b0;
 					C = B;
 				end
